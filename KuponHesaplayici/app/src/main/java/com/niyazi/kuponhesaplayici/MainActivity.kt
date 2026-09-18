@@ -4,13 +4,14 @@ import android.app.Activity
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.widget.*
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class MainActivity : Activity() {
@@ -33,9 +34,12 @@ class MainActivity : Activity() {
     private val grayTextColor = Color.rgb(100, 108, 120)
     private val greenColor = Color.rgb(46, 125, 50)
 
+    private val prefs by lazy {
+        getSharedPreferences("kupon_gecmis", Context.MODE_PRIVATE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         buildUi()
     }
 
@@ -51,7 +55,6 @@ class MainActivity : Activity() {
     ): TextView {
 
         return TextView(this).apply {
-
             text = value
             textSize = size
             setTextColor(color)
@@ -76,16 +79,11 @@ class MainActivity : Activity() {
     ): GradientDrawable {
 
         return GradientDrawable().apply {
-
             setColor(fillColor)
-
             cornerRadius = dp(radius.toInt()).toFloat()
 
             if (strokeColor != null) {
-                setStroke(
-                    dp(1),
-                    strokeColor
-                )
+                setStroke(dp(1), strokeColor)
             }
         }
     }
@@ -103,9 +101,7 @@ class MainActivity : Activity() {
                 dp(16)
             )
 
-            setBackgroundColor(
-                pageBackgroundColor
-            )
+            setBackgroundColor(pageBackgroundColor)
         }
 
         // BAŞLIK
@@ -152,17 +148,11 @@ class MainActivity : Activity() {
                 -1,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-
-                setMargins(
-                    0,
-                    0,
-                    0,
-                    dp(14)
-                )
+                setMargins(0, 0, 0, dp(14))
             }
         )
 
-        // KASA KARTI
+        // KASA
         val kasaCard = LinearLayout(this).apply {
 
             orientation = LinearLayout.VERTICAL
@@ -201,14 +191,10 @@ class MainActivity : Activity() {
                         InputType.TYPE_NUMBER_FLAG_DECIMAL
 
             setSingleLine()
-
             textSize = 22f
-
             gravity = Gravity.CENTER_VERTICAL
 
-            setTextColor(
-                darkTextColor
-            )
+            setTextColor(darkTextColor)
 
             setSelectAllOnFocus(true)
 
@@ -236,13 +222,7 @@ class MainActivity : Activity() {
                 -1,
                 dp(56)
             ).apply {
-
-                setMargins(
-                    0,
-                    dp(8),
-                    0,
-                    0
-                )
+                setMargins(0, dp(8), 0, 0)
             }
         )
 
@@ -252,13 +232,7 @@ class MainActivity : Activity() {
                 -1,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-
-                setMargins(
-                    0,
-                    0,
-                    0,
-                    dp(12)
-                )
+                setMargins(0, 0, 0, dp(12))
             }
         )
 
@@ -274,7 +248,6 @@ class MainActivity : Activity() {
         val tabs = LinearLayout(this).apply {
 
             orientation = LinearLayout.HORIZONTAL
-
             gravity = Gravity.CENTER
 
             setPadding(
@@ -292,22 +265,13 @@ class MainActivity : Activity() {
             val button = Button(this).apply {
 
                 text = n.toString()
-
                 isAllCaps = false
-
                 textSize = 14f
 
-                setPadding(
-                    0,
-                    0,
-                    0,
-                    0
-                )
+                setPadding(0, 0, 0, 0)
 
                 setOnClickListener {
-
                     count = n
-
                     buildOdds()
                 }
             }
@@ -321,7 +285,6 @@ class MainActivity : Activity() {
                     dp(46),
                     1f
                 ).apply {
-
                     setMargins(
                         dp(2),
                         0,
@@ -336,14 +299,11 @@ class MainActivity : Activity() {
 
         // KAYDIRILABİLİR ALAN
         container = LinearLayout(this).apply {
-
             orientation = LinearLayout.VERTICAL
         }
 
         val scrollView = ScrollView(this).apply {
-
             isFillViewport = true
-
             addView(container)
         }
 
@@ -366,7 +326,6 @@ class MainActivity : Activity() {
         for (i in matchButtons.indices) {
 
             val button = matchButtons[i]
-
             val number = i + 2
 
             if (number == count) {
@@ -378,9 +337,7 @@ class MainActivity : Activity() {
                     )
                 )
 
-                button.setTextColor(
-                    Color.WHITE
-                )
+                button.setTextColor(Color.WHITE)
 
             } else {
 
@@ -392,9 +349,7 @@ class MainActivity : Activity() {
                     )
                 )
 
-                button.setTextColor(
-                    darkTextColor
-                )
+                button.setTextColor(darkTextColor)
             }
         }
     }
@@ -404,7 +359,6 @@ class MainActivity : Activity() {
         resultView = null
 
         container.removeAllViews()
-
         oddsFields.clear()
 
         updateMatchButtons()
@@ -434,7 +388,6 @@ class MainActivity : Activity() {
             val card = LinearLayout(this).apply {
 
                 orientation = LinearLayout.HORIZONTAL
-
                 gravity = Gravity.CENTER_VERTICAL
 
                 setPadding(
@@ -470,9 +423,7 @@ class MainActivity : Activity() {
 
             val e = EditText(this).apply {
 
-                setText(
-                    defaultValues[i]
-                )
+                setText(defaultValues[i])
 
                 inputType =
                     InputType.TYPE_CLASS_NUMBER or
@@ -481,15 +432,11 @@ class MainActivity : Activity() {
                 setSingleLine()
 
                 textSize = 19f
-
                 gravity = Gravity.CENTER
 
-                setTextColor(
-                    darkBlueColor
-                )
+                setTextColor(darkBlueColor)
 
-                typeface =
-                    Typeface.DEFAULT_BOLD
+                typeface = Typeface.DEFAULT_BOLD
 
                 setBackgroundDrawable(
                     makeRoundedBackground(
@@ -523,7 +470,6 @@ class MainActivity : Activity() {
                     -1,
                     dp(64)
                 ).apply {
-
                     setMargins(
                         0,
                         dp(4),
@@ -538,17 +484,12 @@ class MainActivity : Activity() {
         val calc = Button(this).apply {
 
             text = "HESAPLA"
-
             isAllCaps = false
-
             textSize = 18f
 
-            typeface =
-                Typeface.DEFAULT_BOLD
+            typeface = Typeface.DEFAULT_BOLD
 
-            setTextColor(
-                Color.WHITE
-            )
+            setTextColor(Color.WHITE)
 
             setBackgroundDrawable(
                 makeRoundedBackground(
@@ -558,7 +499,6 @@ class MainActivity : Activity() {
             )
 
             setOnClickListener {
-
                 calculate()
             }
         }
@@ -569,10 +509,86 @@ class MainActivity : Activity() {
                 -1,
                 dp(58)
             ).apply {
-
                 setMargins(
                     0,
                     dp(12),
+                    0,
+                    dp(8)
+                )
+            }
+        )
+
+        // KAYDET
+        val saveButton = Button(this).apply {
+
+            text = "💾  HESAPLAMAYI KAYDET"
+            isAllCaps = false
+            textSize = 16f
+
+            typeface = Typeface.DEFAULT_BOLD
+
+            setTextColor(darkBlueColor)
+
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    lightBlueColor,
+                    16f,
+                    blueColor
+                )
+            )
+
+            setOnClickListener {
+                saveCalculation()
+            }
+        }
+
+        container.addView(
+            saveButton,
+            LinearLayout.LayoutParams(
+                -1,
+                dp(54)
+            ).apply {
+                setMargins(
+                    0,
+                    0,
+                    0,
+                    dp(8)
+                )
+            }
+        )
+
+        // GEÇMİŞ
+        val historyButton = Button(this).apply {
+
+            text = "📋  GEÇMİŞ HESAPLAMALAR"
+            isAllCaps = false
+            textSize = 15f
+
+            typeface = Typeface.DEFAULT_BOLD
+
+            setTextColor(Color.WHITE)
+
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    blueColor,
+                    16f
+                )
+            )
+
+            setOnClickListener {
+                showHistory()
+            }
+        }
+
+        container.addView(
+            historyButton,
+            LinearLayout.LayoutParams(
+                -1,
+                dp(54)
+            ).apply {
+                setMargins(
+                    0,
+                    0,
                     0,
                     dp(14)
                 )
@@ -584,7 +600,6 @@ class MainActivity : Activity() {
 
     private fun calculate() {
 
-        // Klavyeyi kapat
         val imm =
             getSystemService(
                 Context.INPUT_METHOD_SERVICE
@@ -595,9 +610,7 @@ class MainActivity : Activity() {
             0
         )
 
-        // Eski sonucu kaldır
         resultView?.let {
-
             if (it.parent === container) {
                 container.removeView(it)
             }
@@ -669,20 +682,17 @@ class MainActivity : Activity() {
             )
 
             container.addView(result)
-
             return
         }
 
         var reciprocal = 0.0
 
         for (odd in odds) {
-
             reciprocal += 1.0 / odd
         }
 
         var total = 0.0
 
-        // Maç sonuçları
         for (i in odds.indices) {
 
             val odd = odds[i]
@@ -778,7 +788,6 @@ class MainActivity : Activity() {
                     -1,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-
                     setMargins(
                         0,
                         dp(5),
@@ -878,7 +887,6 @@ class MainActivity : Activity() {
                 -1,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-
                 setMargins(
                     0,
                     dp(12),
@@ -889,5 +897,394 @@ class MainActivity : Activity() {
         )
 
         container.addView(result)
+    }
+
+    // =========================================================
+    // KAYDETME
+    // =========================================================
+
+    private fun saveCalculation() {
+
+        val bankroll =
+            kasa.text
+                .toString()
+                .replace(',', '.')
+                .toDoubleOrNull()
+                ?: 0.0
+
+        val odds = oddsFields.map {
+            it.text
+                .toString()
+                .replace(',', '.')
+                .toDoubleOrNull()
+                ?: 0.0
+        }
+
+        if (bankroll <= 0.0 || odds.any { it <= 0.0 }) {
+
+            Toast.makeText(
+                this,
+                "Önce geçerli kasa ve oranları gir.",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        var reciprocal = 0.0
+
+        for (odd in odds) {
+            reciprocal += 1.0 / odd
+        }
+
+        val payout = bankroll / reciprocal
+
+        val date = SimpleDateFormat(
+            "dd.MM.yyyy HH:mm",
+            Locale.getDefault()
+        ).format(Date())
+
+        val oddsText = odds.joinToString(",")
+
+        val record =
+            "$date|$count|$bankroll|$oddsText|$payout"
+
+        val oldRecords =
+            prefs.getStringSet(
+                "records",
+                emptySet()
+            )?.toMutableList()
+                ?: mutableListOf()
+
+        oldRecords.add(record)
+
+        // Son 50 kaydı tut
+        val lastRecords =
+            oldRecords.takeLast(50).toSet()
+
+        prefs.edit()
+            .putStringSet(
+                "records",
+                lastRecords
+            )
+            .apply()
+
+        Toast.makeText(
+            this,
+            "✅ Hesaplama kaydedildi.",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    // =========================================================
+    // GEÇMİŞİ GÖSTER
+    // =========================================================
+
+    private fun showHistory() {
+
+        val records =
+            prefs.getStringSet(
+                "records",
+                emptySet()
+            )?.toList()
+                ?.reversed()
+                ?: emptyList()
+
+        if (records.isEmpty()) {
+
+            Toast.makeText(
+                this,
+                "Henüz kayıtlı hesaplama yok.",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        val dialogLayout =
+            LinearLayout(this).apply {
+
+                orientation =
+                    LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(20),
+                    dp(10),
+                    dp(20),
+                    dp(10)
+                )
+        }
+
+        val title =
+            text(
+                "📋  GEÇMİŞ HESAPLAMALAR",
+                20f,
+                true,
+                darkBlueColor
+            )
+
+        dialogLayout.addView(title)
+
+        val scroll =
+            ScrollView(this)
+
+        val list =
+            LinearLayout(this).apply {
+                orientation =
+                    LinearLayout.VERTICAL
+            }
+
+        for (record in records) {
+
+            val parts =
+                record.split("|")
+
+            if (parts.size < 5) {
+                continue
+            }
+
+            val date = parts[0]
+            val matchCount = parts[1]
+            val bankroll = parts[2].toDoubleOrNull() ?: 0.0
+            val odds = parts[3].split(",")
+            val payout = parts[4].toDoubleOrNull() ?: 0.0
+
+            val card =
+                LinearLayout(this).apply {
+
+                    orientation =
+                        LinearLayout.VERTICAL
+
+                    setPadding(
+                        dp(14),
+                        dp(10),
+                        dp(14),
+                        dp(10)
+                    )
+
+                    setBackgroundDrawable(
+                        makeRoundedBackground(
+                            Color.rgb(248, 250, 253),
+                            14f,
+                            Color.rgb(225, 229, 235)
+                        )
+                    )
+
+                    setOnClickListener {
+
+                        showHistoryDetail(
+                            date,
+                            matchCount,
+                            bankroll,
+                            odds,
+                            payout
+                        )
+                    }
+                }
+
+            card.addView(
+                text(
+                    "📅 $date",
+                    15f,
+                    true,
+                    darkTextColor
+                )
+            )
+
+            card.addView(
+                text(
+                    "⚽ $matchCount maç   •   Kasa: ${
+                        String.format(
+                            Locale.US,
+                            "%.2f",
+                            bankroll
+                        )
+                    } TL",
+                    14f
+                )
+            )
+
+            card.addView(
+                text(
+                    "💰 Geri dönüş: ${
+                        String.format(
+                            Locale.US,
+                            "%.2f",
+                            payout
+                        )
+                    } TL",
+                    14f,
+                    true,
+                    greenColor
+                )
+            )
+
+            card.addView(
+                text(
+                    "Oranlar: ${odds.joinToString("  •  ")}",
+                    13f,
+                    false,
+                    grayTextColor
+                )
+            )
+
+            list.addView(
+                card,
+                LinearLayout.LayoutParams(
+                    -1,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(
+                        0,
+                        dp(5),
+                        0,
+                        dp(5)
+                    )
+                }
+            )
+        }
+
+        scroll.addView(list)
+
+        dialogLayout.addView(
+            scroll,
+            LinearLayout.LayoutParams(
+                -1,
+                dp(430)
+            )
+        )
+
+        val clearButton =
+            Button(this).apply {
+
+                text = "🗑  TÜM GEÇMİŞİ SİL"
+                isAllCaps = false
+
+                setTextColor(
+                    Color.rgb(190, 40, 40)
+                )
+
+                setOnClickListener {
+
+                    AlertDialogHelper.confirmDelete(
+                        this@MainActivity
+                    )
+                }
+            }
+
+        dialogLayout.addView(
+            clearButton,
+            LinearLayout.LayoutParams(
+                -1,
+                dp(52)
+            ).apply {
+                setMargins(
+                    0,
+                    dp(8),
+                    0,
+                    0
+                )
+            }
+        )
+
+        val dialog =
+            android.app.AlertDialog.Builder(this)
+                .setView(dialogLayout)
+                .setPositiveButton("KAPAT", null)
+                .create()
+
+        dialog.show()
+    }
+
+    // =========================================================
+    // GEÇMİŞ DETAYI
+    // =========================================================
+
+    private fun showHistoryDetail(
+        date: String,
+        matchCount: String,
+        bankroll: Double,
+        odds: List<String>,
+        payout: Double
+    ) {
+
+        val message =
+            StringBuilder()
+
+        message.append("📅 Tarih: $date\n\n")
+        message.append("💰 Kasa: ")
+        message.append(
+            String.format(
+                Locale.US,
+                "%.2f",
+                bankroll
+            )
+        )
+        message.append(" TL\n\n")
+
+        message.append("⚽ Maç sayısı: $matchCount\n\n")
+
+        message.append("🎯 Oranlar:\n")
+
+        for (i in odds.indices) {
+            message.append(
+                "Maç ${i + 1}: ${odds[i]}\n"
+            )
+        }
+
+        message.append("\n💵 Geri dönüş: ")
+        message.append(
+            String.format(
+                Locale.US,
+                "%.2f",
+                payout
+            )
+        )
+        message.append(" TL")
+
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Kupon Detayı")
+            .setMessage(message.toString())
+            .setPositiveButton("KAPAT", null)
+            .show()
+    }
+
+    // =========================================================
+    // GEÇMİŞİ TEMİZLE
+    // =========================================================
+
+    object AlertDialogHelper {
+
+        fun confirmDelete(activity: Activity) {
+
+            android.app.AlertDialog.Builder(activity)
+                .setTitle("Geçmişi Sil")
+                .setMessage(
+                    "Tüm kayıtlı hesaplamalar silinecek. Emin misin?"
+                )
+                .setNegativeButton(
+                    "VAZGEÇ",
+                    null
+                )
+                .setPositiveButton(
+                    "SİL"
+                ) { _, _ ->
+
+                    activity.getSharedPreferences(
+                        "kupon_gecmis",
+                        Context.MODE_PRIVATE
+                    )
+                        .edit()
+                        .remove("records")
+                        .apply()
+
+                    Toast.makeText(
+                        activity,
+                        "🗑 Geçmiş temizlendi.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .show()
+        }
     }
 }
