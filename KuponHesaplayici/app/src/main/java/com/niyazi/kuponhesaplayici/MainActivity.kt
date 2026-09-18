@@ -14,7 +14,7 @@ class MainActivity : android.app.Activity() {
     private lateinit var container: LinearLayout
     private var count = 3
     private val oddsFields = mutableListOf<EditText>()
-
+private var resultView: LinearLayout? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         buildUi()
@@ -65,27 +65,127 @@ class MainActivity : android.app.Activity() {
     }
 
     private fun calculate() {
-        val bankroll=kasa.text.toString().replace(',','.').toDoubleOrNull() ?: 0.0
-        val odds=oddsFields.map { it.text.toString().replace(',','.').toDoubleOrNull() ?: 0.0 }
-        val valid=bankroll>0 && odds.all { it>0 }
-        val result=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(12),dp(10),dp(12),dp(10)); setBackgroundColor(Color.WHITE) }
-        result.addView(text("SONUÇLAR",18f,true))
-        if(!valid){ result.addView(text("Kasa ve tüm oranları geçerli giriniz.",14f)); container.addView(result); return }
-        val reciprocal=odds.sumOf { 1.0/it }
-        var total=0.0
-        odds.forEachIndexed { i,o ->
-            val stake=bankroll/(o*reciprocal)
-            val payout=stake*o
-            val net=payout-stake
-            total+=stake
-            val line=TextView(this).apply { text=String.format(Locale.US,"Maç %d  |  Oran %.2f  |  Yatırım %.2f TL  |  Gelirse %.2f TL  |  Net %.2f TL",i+1,o,stake,payout,net); textSize=14f; setTextColor(Color.DKGRAY); setPadding(0,dp(7),0,dp(7)) }
-            result.addView(line)
-        }
-        val payout = bankroll / reciprocal
-        result.addView(text(String.format(Locale.US,"Toplam yatırım: %.2f TL",total),16f,true))
-        result.addView(text(String.format(Locale.US,"Herhangi biri gelirse geri dönüş: %.2f TL",payout),16f,true))
-        result.addView(text(String.format(Locale.US,"Kalan kasa: %.2f TL",bankroll-total),16f,true))
-        result.addView(text(String.format(Locale.US,"Geri dönüş / başlangıç kasa: %.2f%%",(payout/bankroll)*100),16f,true))
-        container.addView(result)
+
+    // Önceki sonucu kaldır
+    resultView?.let {
+        container.removeView(it)
     }
+
+    val bankroll = kasa.text.toString()
+        .replace(',', '.')
+        .toDoubleOrNull() ?: 0.0
+
+    val odds = oddsFields.map {
+        it.text.toString()
+            .replace(',', '.')
+            .toDoubleOrNull() ?: 0.0
+    }
+
+    val valid = bankroll > 0.0 && odds.all { it > 0.0 }
+
+    val result = LinearLayout(this).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(dp(12), dp(10), dp(12), dp(10))
+        setBackgroundColor(Color.WHITE)
+    }
+
+    resultView = result
+
+    result.addView(text("SONUÇLAR", 18f, true))
+
+    if (!valid) {
+        result.addView(
+            text("Kasa ve tüm oranları geçerli giriniz.", 14f)
+        )
+        container.addView(result)
+        return
+    }
+
+    var reciprocal = 0.0
+
+    for (odd in odds) {
+        reciprocal += 1.0 / odd
+    }
+
+    var total = 0.0
+
+    for (i in odds.indices) {
+
+        val odd = odds[i]
+        val stake = bankroll / (odd * reciprocal)
+        val payout = stake * odd
+        val net = payout - stake
+
+        total += stake
+
+        val line = TextView(this).apply {
+            text = String.format(
+                Locale.US,
+                "Maç %d  |  Oran %.2f  |  Yatırım %.2f TL  |  Gelirse %.2f TL  |  Net %.2f TL",
+                i + 1,
+                odd,
+                stake,
+                payout,
+                net
+            )
+            textSize = 14f
+            setTextColor(Color.DKGRAY)
+            setPadding(0, dp(7), 0, dp(7))
+        }
+
+        result.addView(line)
+    }
+
+    val payout = bankroll / reciprocal
+
+    result.addView(
+        text(
+            String.format(
+                Locale.US,
+                "Toplam yatırım: %.2f TL",
+                total
+            ),
+            16f,
+            true
+        )
+    )
+
+    result.addView(
+        text(
+            String.format(
+                Locale.US,
+                "Herhangi biri gelirse geri dönüş: %.2f TL",
+                payout
+            ),
+            16f,
+            true
+        )
+    )
+
+    result.addView(
+        text(
+            String.format(
+                Locale.US,
+                "Kalan kasa: %.2f TL",
+                bankroll - total
+            ),
+            16f,
+            true
+        )
+    )
+
+    result.addView(
+        text(
+            String.format(
+                Locale.US,
+                "Geri dönüş / başlangıç kasa: %.2f%%",
+                (payout / bankroll) * 100
+            ),
+            16f,
+            true
+        )
+    )
+
+    container.addView(result)
+}
 }
