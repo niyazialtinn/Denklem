@@ -53,8 +53,7 @@ buildUi()
 
 private fun dp(value: Int): Int {
 return (
-value *
-resources.displayMetrics.density
+value * resources.displayMetrics.density
 ).toInt()
 }
 
@@ -66,7 +65,6 @@ color: Int = darkTextColor
 ): TextView {
 
 return TextView(this).apply {
-
 text = value
 textSize = size
 setTextColor(color)
@@ -91,14 +89,12 @@ strokeColor: Int? = null
 ): GradientDrawable {
 
 return GradientDrawable().apply {
-
 setColor(fillColor)
 
 cornerRadius =
 dp(radius.toInt()).toFloat()
 
 if (strokeColor != null) {
-
 setStroke(
 dp(1),
 strokeColor
@@ -130,8 +126,6 @@ setBackgroundColor(
 pageBackgroundColor
 )
 }
-
-// BAŞLIK
 
 val header =
 LinearLayout(this).apply {
@@ -178,7 +172,6 @@ LinearLayout.LayoutParams(
 -1,
 LinearLayout.LayoutParams.WRAP_CONTENT
 ).apply {
-
 setMargins(
 0,
 0,
@@ -187,8 +180,6 @@ dp(14)
 )
 }
 )
-
-// KASA
 
 val kasaCard =
 LinearLayout(this).apply {
@@ -280,7 +271,6 @@ LinearLayout.LayoutParams(
 -1,
 dp(56)
 ).apply {
-
 setMargins(
 0,
 dp(8),
@@ -296,7 +286,6 @@ LinearLayout.LayoutParams(
 -1,
 LinearLayout.LayoutParams.WRAP_CONTENT
 ).apply {
-
 setMargins(
 0,
 0,
@@ -305,8 +294,6 @@ dp(12)
 )
 }
 )
-
-// MAÇ SAYISI
 
 root.addView(
 makeText(
@@ -343,11 +330,9 @@ Button(this).apply {
 text =
 number.toString()
 
-isAllCaps =
-false
+isAllCaps = false
 
-textSize =
-14f
+textSize = 14f
 
 setPadding(
 0,
@@ -365,9 +350,7 @@ buildOdds()
 }
 }
 
-matchButtons.add(
-button
-)
+matchButtons.add(button)
 
 tabs.addView(
 button,
@@ -376,7 +359,6 @@ LinearLayout.LayoutParams(
 dp(46),
 1f
 ).apply {
-
 setMargins(
 dp(2),
 0,
@@ -389,8 +371,6 @@ dp(2),
 
 root.addView(tabs)
 
-// SCROLL
-
 container =
 LinearLayout(this).apply {
 
@@ -401,12 +381,9 @@ LinearLayout.VERTICAL
 val scroll =
 ScrollView(this).apply {
 
-isFillViewport =
-true
+isFillViewport = true
 
-addView(
-container
-)
+addView(container)
 }
 
 root.addView(
@@ -423,15 +400,9 @@ setContentView(root)
 buildOdds()
 }
 
-// =========================================================
-// MAÇ BUTONLARI
-// =========================================================
-
 private fun updateMatchButtons() {
 
-for (
-index in matchButtons.indices
-) {
+for (index in matchButtons.indices) {
 
 val button =
 matchButtons[index]
@@ -565,8 +536,7 @@ InputType.TYPE_NUMBER_FLAG_DECIMAL
 
 setSingleLine()
 
-textSize =
-19f
+textSize = 19f
 
 gravity =
 Gravity.CENTER
@@ -621,19 +591,15 @@ dp(4)
 )
 }
 
-// HESAPLA
-
 val calculateButton =
 Button(this).apply {
 
 text =
 "HESAPLA"
 
-isAllCaps =
-false
+isAllCaps = false
 
-textSize =
-18f
+textSize = 18f
 
 typeface =
 Typeface.DEFAULT_BOLD
@@ -670,19 +636,15 @@ dp(8)
 }
 )
 
-// KAYDET
-
 val saveButton =
 Button(this).apply {
 
 text =
 "💾 HESAPLAMAYI KAYDET"
 
-isAllCaps =
-false
+isAllCaps = false
 
-textSize =
-16f
+textSize = 16f
 
 typeface =
 Typeface.DEFAULT_BOLD
@@ -720,19 +682,15 @@ dp(8)
 }
 )
 
-// İSTATİSTİK
-
 val statisticsButton =
 Button(this).apply {
 
 text =
 "📊 İSTATİSTİKLER"
 
-isAllCaps =
-false
+isAllCaps = false
 
-textSize =
-15f
+textSize = 15f
 
 typeface =
 Typeface.DEFAULT_BOLD
@@ -769,19 +727,15 @@ dp(8)
 }
 )
 
-// KUPON YÖNETİMİ
-
 val historyButton =
 Button(this).apply {
 
 text =
 "📋 KUPON YÖNETİMİ"
 
-isAllCaps =
-false
+isAllCaps = false
 
-textSize =
-15f
+textSize = 15f
 
 typeface =
 Typeface.DEFAULT_BOLD
@@ -843,7 +797,6 @@ if (
 oldResult.parent ===
 container
 ) {
-
 container.removeView(
 oldResult
 )
@@ -900,8 +853,7 @@ Color.rgb(
 )
 }
 
-resultView =
-result
+resultView = result
 
 result.addView(
 makeText(
@@ -927,24 +879,18 @@ redColor
 )
 )
 
-container.addView(
-result
-)
+container.addView(result)
 
 return
 }
 
-var reciprocal =
-0.0
+var reciprocal = 0.0
 
 for (odd in odds) {
-
-reciprocal +=
-1.0 / odd
+reciprocal += 1.0 / odd
 }
 
-var total =
-0.0
+var total = 0.0
 
 for (i in odds.indices) {
 
@@ -961,8 +907,7 @@ stake * odd
 val net =
 payout - stake
 
-total +=
-stake
+total += stake
 
 val matchCard =
 LinearLayout(this).apply {
@@ -1160,9 +1105,7 @@ dp(4)
 }
 )
 
-container.addView(
-result
-)
+container.addView(result)
 }
 
 // =========================================================
@@ -1206,6 +1149,15 @@ Toast.LENGTH_SHORT
 
 return
 }
+
+var reciprocal = 0.0
+
+for (odd in odds) {
+reciprocal += 1.0 / odd
+}
+
+val totalPayout =
+bankroll / reciprocal
 
 val nameInput =
 EditText(this).apply {
@@ -1313,7 +1265,6 @@ nameInput.text
 if (
 name.isEmpty()
 ) {
-
 name =
 "İsimsiz Kupon"
 }
@@ -1321,7 +1272,8 @@ name =
 saveRecord(
 name,
 bankroll,
-odds
+odds,
+totalPayout
 )
 
 dialog.dismiss()
@@ -1332,26 +1284,15 @@ dialog.show()
 }
 
 // =========================================================
-// KUPON KAYDI
+// YENİ KUPON KAYDI
 // =========================================================
 
 private fun saveRecord(
 name: String,
 bankroll: Double,
-odds: List<Double>
+odds: List<Double>,
+totalPayout: Double
 ) {
-
-var reciprocal =
-0.0
-
-for (odd in odds) {
-
-reciprocal +=
-1.0 / odd
-}
-
-val payout =
-bankroll / reciprocal
 
 val date =
 SimpleDateFormat(
@@ -1384,22 +1325,78 @@ bankroll
 
 record.put(
 "payout",
+totalPayout
+)
+
+// =====================================================
+// HER MAÇ ARTIK AYRI BİR OBJE
+// =====================================================
+
+val matches =
+JSONArray()
+
+var reciprocal = 0.0
+
+for (odd in odds) {
+reciprocal += 1.0 / odd
+}
+
+for (i in odds.indices) {
+
+val odd =
+odds[i]
+
+val stake =
+bankroll /
+(odd * reciprocal)
+
+val payout =
+stake * odd
+
+val match =
+JSONObject()
+
+match.put(
+"number",
+i + 1
+)
+
+match.put(
+"odd",
+odd
+)
+
+match.put(
+"stake",
+stake
+)
+
+match.put(
+"payout",
 payout
 )
 
-record.put(
+match.put(
 "status",
 "BEKLİYOR"
 )
 
+matches.put(
+match
+)
+}
+
+record.put(
+"matches",
+matches
+)
+
+// Eski uyumluluk için oranları da tutuyoruz.
 val oddsArray =
 JSONArray()
 
 for (odd in odds) {
-
-oddsArray.put(
-odd
-)
+oddsArray.put(odd)
 }
 
 record.put(
@@ -1417,13 +1414,10 @@ record
 while (
 records.length() > 50
 ) {
-
 records.remove(0)
 }
 
-saveRecords(
-records
-)
+saveRecords(records)
 
 Toast.makeText(
 this,
@@ -1433,7 +1427,7 @@ Toast.LENGTH_SHORT
 }
 
 // =========================================================
-// KAYITLARI OKU
+// KAYITLARI AL
 // =========================================================
 
 private fun getRecords(): JSONArray {
@@ -1450,15 +1444,18 @@ if (
 
 try {
 
-return JSONArray(
-saved
-)
+val records =
+JSONArray(saved)
+
+migrateRecords(records)
+
+return records
 
 } catch (_: Exception) {
-// Eski kayıt sistemine geç
 }
 }
 
+// Eski V2/V3 kayıt sistemi
 val oldRecords: Set<String> =
 prefs.getStringSet(
 "records",
@@ -1471,9 +1468,7 @@ JSONArray()
 val oldList =
 oldRecords.toList()
 
-for (
-index in oldList.indices
-) {
+for (index in oldList.indices) {
 
 val recordText =
 oldList[index]
@@ -1545,9 +1540,7 @@ obj.put(
 "BEKLİYOR"
 )
 
-result.put(
-obj
-)
+result.put(obj)
 
 } else if (
 parts.size >= 5
@@ -1611,26 +1604,167 @@ obj.put(
 "BEKLİYOR"
 )
 
-result.put(
-obj
-)
+result.put(obj)
 }
 
 } catch (_: Exception) {
-// Hatalı eski kayıt atlanır
 }
 }
+
+migrateRecords(result)
 
 if (
 result.length() > 0
 ) {
-
-saveRecords(
-result
-)
+saveRecords(result)
 }
 
 return result
+}
+
+// =========================================================
+// ESKİ KAYITLARI YENİ MAÇ SİSTEMİNE ÇEVİR
+// =========================================================
+
+private fun migrateRecords(
+records: JSONArray
+) {
+
+for (
+i in 0 until records.length()
+) {
+
+try {
+
+val obj =
+records.getJSONObject(i)
+
+val existingMatches =
+obj.optJSONArray(
+"matches"
+)
+
+if (
+existingMatches != null
+) {
+continue
+}
+
+val odds =
+obj.optJSONArray(
+"odds"
+)
+
+if (
+odds == null ||
+odds.length() == 0
+) {
+continue
+}
+
+val bankroll =
+obj.optDouble(
+"bankroll",
+0.0
+)
+
+var reciprocal = 0.0
+
+for (
+oddIndex in 0 until odds.length()
+) {
+
+val odd =
+odds.optDouble(
+oddIndex,
+0.0
+)
+
+if (
+odd > 0.0
+) {
+reciprocal +=
+1.0 / odd
+}
+}
+
+val matches =
+JSONArray()
+
+for (
+matchIndex in 0 until odds.length()
+) {
+
+val odd =
+odds.optDouble(
+matchIndex,
+0.0
+)
+
+if (
+odd <= 0.0
+) {
+continue
+}
+
+val stake =
+if (
+reciprocal > 0.0
+) {
+bankroll /
+(odd * reciprocal)
+} else {
+0.0
+}
+
+val payout =
+stake * odd
+
+val match =
+JSONObject()
+
+match.put(
+"number",
+matchIndex + 1
+)
+
+match.put(
+"odd",
+odd
+)
+
+match.put(
+"stake",
+stake
+)
+
+match.put(
+"payout",
+payout
+)
+
+match.put(
+"status",
+"BEKLİYOR"
+)
+
+matches.put(match)
+}
+
+obj.put(
+"matches",
+matches
+)
+
+// Eski toplam durumunu artık kullanmıyoruz.
+obj.put(
+"status",
+"BEKLİYOR"
+)
+
+} catch (_: Exception) {
+}
+}
 }
 
 private fun saveRecords(
@@ -1667,140 +1801,135 @@ Toast.LENGTH_SHORT
 return
 }
 
-var totalInvestment =
-0.0
+var totalMatches = 0
+var wonMatches = 0
+var lostMatches = 0
+var waitingMatches = 0
 
-var totalPayout =
-0.0
+var totalInvestment = 0.0
+var totalPayout = 0.0
+var realizedProfit = 0.0
 
-var realizedProfit =
-0.0
-
-var won =
-0
-
-var lost =
-0
-
-var waiting =
-0
-
-var highestPayout =
-0.0
-
+var highestPayout = 0.0
 var highestProfit =
 Double.NEGATIVE_INFINITY
 
 for (
-i in 0 until records.length()
+couponIndex in 0 until records.length()
 ) {
 
-val obj =
-records.getJSONObject(i)
+val coupon =
+records.getJSONObject(
+couponIndex
+)
 
-val investment =
-obj.optDouble(
-"bankroll",
+val matches =
+getMatchesForRecord(
+coupon
+)
+
+for (
+matchIndex in 0 until matches.length()
+) {
+
+val match =
+matches.getJSONObject(
+matchIndex
+)
+
+val stake =
+match.optDouble(
+"stake",
 0.0
 )
 
 val payout =
-obj.optDouble(
+match.optDouble(
 "payout",
 0.0
 )
 
 val status =
-obj.optString(
+match.optString(
 "status",
 "BEKLİYOR"
 )
 
+totalMatches++
+
 totalInvestment +=
-investment
+stake
 
 when (status) {
 
 "KAZANDI" -> {
 
-won++
+wonMatches++
+
+totalPayout +=
+payout
 
 realizedProfit +=
-payout - investment
+payout - stake
 }
 
 "KAYBETTİ" -> {
 
-lost++
+lostMatches++
 
 realizedProfit -=
-investment
+stake
 }
 
 else -> {
 
-waiting++
+waitingMatches++
 }
 }
 
 if (
 payout > highestPayout
 ) {
-
 highestPayout =
 payout
 }
 
-val couponProfit =
-if (
-status == "KAZANDI"
-) {
+val matchProfit =
+when (status) {
 
-payout - investment
+"KAZANDI" ->
+payout - stake
 
-} else if (
-status == "KAYBETTİ"
-) {
+"KAYBETTİ" ->
+-stake
 
--investment
-
-} else {
-
+else ->
 0.0
 }
 
 if (
 status != "BEKLİYOR" &&
-couponProfit > highestProfit
+matchProfit > highestProfit
 ) {
-
 highestProfit =
-couponProfit
+matchProfit
 }
-
-if (
-status == "KAZANDI"
-) {
-
-totalPayout +=
-payout
 }
 }
 
 val completed =
-won + lost
+wonMatches + lostMatches
 
 val winRate =
 if (
 completed > 0
 ) {
 
-won.toDouble() /
+wonMatches.toDouble() /
 completed.toDouble() *
 100.0
 
 } else {
-
 0.0
 }
 
@@ -1814,7 +1943,6 @@ totalInvestment *
 100.0
 
 } else {
-
 0.0
 }
 
@@ -1845,7 +1973,9 @@ dp(8)
 )
 }
 
-// GÜNCEL BANKROLL
+// =====================================================
+// BANKROLL
+// =====================================================
 
 val balanceCard =
 LinearLayout(this).apply {
@@ -1916,7 +2046,9 @@ dp(10)
 }
 )
 
-// İSTATİSTİK KARTI
+// =====================================================
+// MAÇ İSTATİSTİKLERİ
+// =====================================================
 
 val stats =
 LinearLayout(this).apply {
@@ -1946,7 +2078,7 @@ Color.rgb(
 
 stats.addView(
 makeText(
-"📊 KUPON İSTATİSTİKLERİ",
+"📊 MAÇ İSTATİSTİKLERİ",
 17f,
 true,
 darkBlueColor
@@ -1955,14 +2087,15 @@ darkBlueColor
 
 stats.addView(
 makeText(
-"🎫 Toplam kupon: ${records.length()}",
-14f
+"🎯 Toplam maç: $totalMatches",
+15f,
+true
 )
 )
 
 stats.addView(
 makeText(
-"🟢 Kazandı: $won",
+"🟢 Kazandı: $wonMatches",
 14f,
 true,
 greenColor
@@ -1971,7 +2104,7 @@ greenColor
 
 stats.addView(
 makeText(
-"🔴 Kaybetti: $lost",
+"🔴 Kaybetti: $lostMatches",
 14f,
 true,
 redColor
@@ -1980,7 +2113,7 @@ redColor
 
 stats.addView(
 makeText(
-"🟠 Bekliyor: $waiting",
+"🟠 Bekliyor: $waitingMatches",
 14f,
 true,
 orangeColor
@@ -2014,7 +2147,7 @@ stats.addView(
 makeText(
 String.format(
 Locale.US,
-"📈 Toplam geri dönüş: %.2f TL",
+"📈 Kazananlardan geri dönüş: %.2f TL",
 totalPayout
 ),
 14f
@@ -2023,7 +2156,7 @@ totalPayout
 
 val profitText =
 if (
-realizedProfit >= 0
+realizedProfit >= 0.0
 ) {
 
 String.format(
@@ -2047,7 +2180,7 @@ profitText,
 19f,
 true,
 if (
-realizedProfit >= 0
+realizedProfit >= 0.0
 ) {
 greenColor
 } else {
@@ -2114,7 +2247,9 @@ dp(10)
 }
 )
 
-// BANKROLL AYARLA
+// =====================================================
+// BANKROLL AYARI
+// =====================================================
 
 val bankrollButton =
 Button(this).apply {
@@ -2122,11 +2257,9 @@ Button(this).apply {
 text =
 "💰 BAŞLANGIÇ BANKROLL AYARLA"
 
-isAllCaps =
-false
+isAllCaps = false
 
-textSize =
-14f
+textSize = 14f
 
 setTextColor(
 darkBlueColor
@@ -2150,15 +2283,7 @@ bankrollButton,
 LinearLayout.LayoutParams(
 -1,
 dp(52)
-).apply {
-
-setMargins(
-0,
-0,
-0,
-dp(8)
 )
-}
 )
 
 AlertDialog.Builder(this)
@@ -2174,7 +2299,136 @@ null
 }
 
 // =========================================================
-// BANKROLL AYARLA
+// MAÇLARI GETİR
+// =========================================================
+
+private fun getMatchesForRecord(
+record: JSONObject
+): JSONArray {
+
+val existing =
+record.optJSONArray(
+"matches"
+)
+
+if (
+existing != null
+) {
+return existing
+}
+
+// Güvenlik amaçlı eski kayıt dönüşümü
+val odds =
+record.optJSONArray(
+"odds"
+)
+
+val result =
+JSONArray()
+
+if (
+odds == null
+) {
+return result
+}
+
+val bankroll =
+record.optDouble(
+"bankroll",
+0.0
+)
+
+var reciprocal = 0.0
+
+for (
+i in 0 until odds.length()
+) {
+
+val odd =
+odds.optDouble(
+i,
+0.0
+)
+
+if (
+odd > 0.0
+) {
+reciprocal +=
+1.0 / odd
+}
+}
+
+for (
+i in 0 until odds.length()
+) {
+
+val odd =
+odds.optDouble(
+i,
+0.0
+)
+
+if (
+odd <= 0.0
+) {
+continue
+}
+
+val stake =
+if (
+reciprocal > 0.0
+) {
+bankroll /
+(odd * reciprocal)
+} else {
+0.0
+}
+
+val match =
+JSONObject()
+
+match.put(
+"number",
+i + 1
+)
+
+match.put(
+"odd",
+odd
+)
+
+match.put(
+"stake",
+stake
+)
+
+match.put(
+"payout",
+stake * odd
+)
+
+match.put(
+"status",
+"BEKLİYOR"
+)
+
+result.put(match)
+}
+
+record.put(
+"matches",
+result
+)
+
+saveRecords(
+getRecordsWithoutMigration()
+)
+
+return result
+}
+
+// =========================================================
+// BANKROLL DİYALOĞU
 // =========================================================
 
 private fun showBankrollDialog() {
@@ -2210,7 +2464,6 @@ prefs.getString(
 if (
 !current.isNullOrEmpty()
 ) {
-
 setText(current)
 }
 
@@ -2339,10 +2592,10 @@ orientation =
 LinearLayout.VERTICAL
 
 setPadding(
-dp(18),
-dp(8),
-dp(18),
-dp(8)
+dp(14),
+dp(6),
+dp(14),
+dp(6)
 )
 }
 
@@ -2361,7 +2614,9 @@ index in records.length() - 1 downTo 0
 ) {
 
 val obj =
-records.getJSONObject(index)
+records.getJSONObject(
+index
+)
 
 addHistoryCard(
 list,
@@ -2377,7 +2632,7 @@ layout.addView(
 scroll,
 LinearLayout.LayoutParams(
 -1,
-dp(470)
+dp(500)
 )
 )
 
@@ -2387,8 +2642,7 @@ Button(this).apply {
 text =
 "🗑 TÜM KUPONLARI SİL"
 
-isAllCaps =
-false
+isAllCaps = false
 
 setTextColor(
 redColor
@@ -2434,7 +2688,7 @@ null
 private fun addHistoryCard(
 list: LinearLayout,
 records: JSONArray,
-index: Int,
+couponIndex: Int,
 obj: JSONObject
 ) {
 
@@ -2456,22 +2710,9 @@ obj.optInt(
 0
 )
 
-val bankroll =
-obj.optDouble(
-"bankroll",
-0.0
-)
-
-val payout =
-obj.optDouble(
-"payout",
-0.0
-)
-
-val status =
-obj.optString(
-"status",
-"BEKLİYOR"
+val matches =
+getMatchesForRecord(
+obj
 )
 
 val card =
@@ -2482,15 +2723,15 @@ LinearLayout.VERTICAL
 
 setPadding(
 dp(14),
-dp(11),
+dp(12),
 dp(14),
-dp(11)
+dp(12)
 )
 
 setBackgroundDrawable(
 makeRoundedBackground(
 Color.WHITE,
-15f,
+16f,
 Color.rgb(
 225,
 229,
@@ -2498,205 +2739,65 @@ Color.rgb(
 )
 )
 )
-
-setOnClickListener {
-
-showHistoryDetail(
-records,
-index
-)
-}
 }
 
-val topRow =
-LinearLayout(this).apply {
-
-orientation =
-LinearLayout.HORIZONTAL
-
-gravity =
-Gravity.CENTER_VERTICAL
-}
-
-topRow.addView(
-makeText(
-"🎫 $name",
-17f,
-true,
-darkBlueColor
-),
-LinearLayout.LayoutParams(
-0,
-LinearLayout.LayoutParams.WRAP_CONTENT,
-1f
-)
-)
-
-topRow.addView(
-statusView(status),
-LinearLayout.LayoutParams(
-dp(105),
-dp(34)
-)
-)
-
-card.addView(topRow)
+// =====================================================
+// BAŞLIK
+// =====================================================
 
 card.addView(
 makeText(
-"📅 $date",
+"🎫 $name",
+18f,
+true,
+darkBlueColor
+)
+)
+
+card.addView(
+makeText(
+"📅 $date • ⚽ $matchCount maç",
 13f,
 false,
 grayTextColor
 )
 )
 
-card.addView(
-makeText(
-"⚽ $matchCount maç • 💰 Kasa: ${
-String.format(
-Locale.US,
-"%.2f",
-bankroll
-)
-} TL",
-14f
-)
+// =====================================================
+// MAÇLAR
+// =====================================================
+
+for (
+matchIndex in 0 until matches.length()
+) {
+
+val match =
+matches.getJSONObject(
+matchIndex
 )
 
-card.addView(
-makeText(
-"📈 Geri dönüş: ${
-String.format(
-Locale.US,
-"%.2f",
-payout
-)
-} TL",
-14f,
-true,
-greenColor
-)
-)
-
-val statusRow =
-LinearLayout(this).apply {
-
-orientation =
-LinearLayout.HORIZONTAL
-}
-
-val waiting =
-smallStatusButton(
-"🟠 Bekliyor",
-orangeColor
-)
-
-waiting.setOnClickListener {
-
-updateStatus(
+addMatchStatusCard(
+card,
 records,
-index,
-"BEKLİYOR"
+couponIndex,
+matchIndex,
+match
 )
 }
 
-val won =
-smallStatusButton(
-"🟢 Kazandı",
-greenColor
-)
-
-won.setOnClickListener {
-
-updateStatus(
-records,
-index,
-"KAZANDI"
-)
-}
-
-val lost =
-smallStatusButton(
-"🔴 Kaybetti",
-redColor
-)
-
-lost.setOnClickListener {
-
-updateStatus(
-records,
-index,
-"KAYBETTİ"
-)
-}
-
-statusRow.addView(
-waiting,
-LinearLayout.LayoutParams(
-0,
-dp(42),
-1f
-).apply {
-
-setMargins(
-0,
-dp(8),
-dp(3),
-0
-)
-}
-)
-
-statusRow.addView(
-won,
-LinearLayout.LayoutParams(
-0,
-dp(42),
-1f
-).apply {
-
-setMargins(
-dp(3),
-dp(8),
-dp(3),
-0
-)
-}
-)
-
-statusRow.addView(
-lost,
-LinearLayout.LayoutParams(
-0,
-dp(42),
-1f
-).apply {
-
-setMargins(
-dp(3),
-dp(8),
-0,
-0
-)
-}
-)
-
-card.addView(
-statusRow
-)
+// =====================================================
+// KUPON SİL
+// =====================================================
 
 val delete =
 Button(this).apply {
 
 text =
-"🗑 Kuponu Sil"
+"🗑 KUPONU SİL"
 
-isAllCaps =
-false
+isAllCaps = false
 
-textSize =
-13f
+textSize = 13f
 
 setTextColor(
 redColor
@@ -2717,7 +2818,7 @@ setOnClickListener {
 
 confirmDeleteSingle(
 records,
-index,
+couponIndex,
 name
 )
 }
@@ -2727,12 +2828,12 @@ card.addView(
 delete,
 LinearLayout.LayoutParams(
 -1,
-dp(42)
+dp(44)
 ).apply {
 
 setMargins(
 0,
-dp(7),
+dp(10),
 0,
 0
 )
@@ -2750,22 +2851,278 @@ setMargins(
 0,
 dp(5),
 0,
-dp(5)
+dp(7)
 )
 }
 )
 }
 
 // =========================================================
-// DURUM GÖRÜNÜMÜ
+// TEK MAÇ DURUM KARTI
 // =========================================================
 
-private fun statusView(
+private fun addMatchStatusCard(
+parent: LinearLayout,
+records: JSONArray,
+couponIndex: Int,
+matchIndex: Int,
+match: JSONObject
+) {
+
+val number =
+match.optInt(
+"number",
+matchIndex + 1
+)
+
+val odd =
+match.optDouble(
+"odd",
+0.0
+)
+
+val stake =
+match.optDouble(
+"stake",
+0.0
+)
+
+val payout =
+match.optDouble(
+"payout",
+0.0
+)
+
+val status =
+match.optString(
+"status",
+"BEKLİYOR"
+)
+
+val card =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.VERTICAL
+
+setPadding(
+dp(10),
+dp(9),
+dp(10),
+dp(9)
+)
+
+setBackgroundDrawable(
+makeRoundedBackground(
+Color.rgb(
+248,
+250,
+253
+),
+13f,
+statusColor(status)
+)
+)
+}
+
+// Üst satır
+val top =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.HORIZONTAL
+
+gravity =
+Gravity.CENTER_VERTICAL
+}
+
+top.addView(
+makeText(
+"Maç $number",
+15f,
+true
+),
+LinearLayout.LayoutParams(
+0,
+LinearLayout.LayoutParams.WRAP_CONTENT,
+1f
+)
+)
+
+top.addView(
+makeText(
+String.format(
+Locale.US,
+"Oran %.2f",
+odd
+),
+14f,
+true,
+darkBlueColor
+)
+)
+
+card.addView(top)
+
+card.addView(
+makeText(
+String.format(
+Locale.US,
+"Yatırım: %.2f TL • Gelirse: %.2f TL",
+stake,
+payout
+),
+13f
+)
+)
+
+card.addView(
+makeText(
+"Durum: $status",
+13f,
+true,
+statusColor(status)
+)
+)
+
+// =====================================================
+// DURUM BUTONLARI
+// =====================================================
+
+val buttons =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.HORIZONTAL
+}
+
+val waiting =
+smallStatusButton(
+"🟠 Bekliyor",
+orangeColor
+)
+
+waiting.setOnClickListener {
+
+setMatchStatus(
+records,
+couponIndex,
+matchIndex,
+"BEKLİYOR"
+)
+}
+
+val won =
+smallStatusButton(
+"🟢 Kazandı",
+greenColor
+)
+
+won.setOnClickListener {
+
+setMatchStatus(
+records,
+couponIndex,
+matchIndex,
+"KAZANDI"
+)
+}
+
+val lost =
+smallStatusButton(
+"🔴 Kaybetti",
+redColor
+)
+
+lost.setOnClickListener {
+
+setMatchStatus(
+records,
+couponIndex,
+matchIndex,
+"KAYBETTİ"
+)
+}
+
+buttons.addView(
+waiting,
+LinearLayout.LayoutParams(
+0,
+dp(42),
+1f
+).apply {
+
+setMargins(
+0,
+dp(7),
+dp(3),
+0
+)
+}
+)
+
+buttons.addView(
+won,
+LinearLayout.LayoutParams(
+0,
+dp(42),
+1f
+).apply {
+
+setMargins(
+dp(3),
+dp(7),
+dp(3),
+0
+)
+}
+)
+
+buttons.addView(
+lost,
+LinearLayout.LayoutParams(
+0,
+dp(42),
+1f
+).apply {
+
+setMargins(
+dp(3),
+dp(7),
+0,
+0
+)
+}
+)
+
+card.addView(buttons)
+
+parent.addView(
+card,
+LinearLayout.LayoutParams(
+-1,
+LinearLayout.LayoutParams.WRAP_CONTENT
+).apply {
+
+setMargins(
+0,
+dp(4),
+0,
+dp(4)
+)
+}
+)
+}
+
+// =========================================================
+// DURUM RENGİ
+// =========================================================
+
+private fun statusColor(
 status: String
-): TextView {
+): Int {
 
-val color =
-when (status) {
+return when (status) {
 
 "KAZANDI" ->
 greenColor
@@ -2775,25 +3132,6 @@ redColor
 
 else ->
 orangeColor
-}
-
-return makeText(
-status,
-12f,
-true,
-color
-).apply {
-
-gravity =
-Gravity.CENTER
-
-setBackgroundDrawable(
-makeRoundedBackground(
-Color.WHITE,
-10f,
-color
-)
-)
 }
 }
 
@@ -2839,23 +3177,57 @@ color
 }
 
 // =========================================================
-// DURUM GÜNCELLE
+// TEK MAÇ DURUMU DEĞİŞTİR
 // =========================================================
 
-private fun updateStatus(
+private fun setMatchStatus(
 records: JSONArray,
-index: Int,
+couponIndex: Int,
+matchIndex: Int,
 status: String
 ) {
 
 try {
 
-val obj =
-records.getJSONObject(index)
+val coupon =
+records.getJSONObject(
+couponIndex
+)
 
-obj.put(
+val matches =
+getMatchesForRecord(
+coupon
+)
+
+if (
+matchIndex < 0 ||
+matchIndex >= matches.length()
+) {
+return
+}
+
+val match =
+matches.getJSONObject(
+matchIndex
+)
+
+match.put(
 "status",
 status
+)
+
+coupon.put(
+"matches",
+matches
+)
+
+// Kuponun genel status alanı artık
+// sadece bilgi amaçlı tutuluyor.
+coupon.put(
+"status",
+calculateCouponStatus(
+matches
+)
 )
 
 saveRecords(
@@ -2864,179 +3236,97 @@ records
 
 Toast.makeText(
 this,
-"Durum: $status",
+"Maç ${matchIndex + 1}: $status",
 Toast.LENGTH_SHORT
 ).show()
 
-showHistory()
+// =================================================
+// ÖNEMLİ:
+// showHistory() ÇAĞRILMIYOR.
+// Böylece ikinci AlertDialog açılmıyor.
+// =================================================
+
+refreshHistoryDialog()
 
 } catch (_: Exception) {
 
 Toast.makeText(
 this,
-"Durum güncellenemedi.",
+"Maç durumu güncellenemedi.",
 Toast.LENGTH_SHORT
 ).show()
 }
 }
 
 // =========================================================
-// DETAY
+// KUPON GENEL DURUMU
 // =========================================================
 
-private fun showHistoryDetail(
-records: JSONArray,
-index: Int
+private fun calculateCouponStatus(
+matches: JSONArray
+): String {
+
+var won = 0
+var lost = 0
+var waiting = 0
+
+for (
+i in 0 until matches.length()
 ) {
 
-try {
-
-val obj =
-records.getJSONObject(index)
-
-val name =
-obj.optString(
-"name",
-"İsimsiz Kupon"
-)
-
-val date =
-obj.optString(
-"date",
-"-"
-)
-
-val matchCount =
-obj.optInt(
-"count",
-0
-)
-
-val bankroll =
-obj.optDouble(
-"bankroll",
-0.0
-)
-
-val payout =
-obj.optDouble(
-"payout",
-0.0
-)
-
 val status =
-obj.optString(
+matches
+.getJSONObject(i)
+.optString(
 "status",
 "BEKLİYOR"
 )
 
-val odds =
-obj.optJSONArray(
-"odds"
-)
+when (status) {
 
-val message =
-StringBuilder()
+"KAZANDI" ->
+won++
 
-message.append(
-"🎫 Kupon: $name\n\n"
-)
+"KAYBETTİ" ->
+lost++
 
-message.append(
-"📅 Tarih: $date\n\n"
-)
-
-message.append(
-"📌 Durum: $status\n\n"
-)
-
-message.append(
-"⚽ Maç sayısı: $matchCount\n\n"
-)
-
-message.append(
-"💰 Kasa: "
-)
-
-message.append(
-String.format(
-Locale.US,
-"%.2f",
-bankroll
-)
-)
-
-message.append(
-" TL\n\n"
-)
-
-message.append(
-"🎯 Oranlar:\n"
-)
-
-if (
-odds != null
-) {
-
-for (
-i in 0 until odds.length()
-) {
-
-message.append(
-"Maç ${i + 1}: "
-)
-
-message.append(
-String.format(
-Locale.US,
-"%.2f",
-odds.optDouble(i)
-)
-)
-
-message.append(
-"\n"
-)
+else ->
+waiting++
 }
 }
 
-message.append(
-"\n📈 Geri dönüş: "
-)
+return when {
 
-message.append(
-String.format(
-Locale.US,
-"%.2f",
-payout
-)
-)
+lost > 0 ->
+"KAYBETTİ"
 
-message.append(
-" TL"
-)
+waiting > 0 ->
+"BEKLİYOR"
 
-AlertDialog.Builder(this)
-.setTitle(
-"🎫 Kupon Detayı"
-)
-.setMessage(
-message.toString()
-)
-.setPositiveButton(
-"KAPAT",
-null
-)
-.show()
+won > 0 ->
+"KAZANDI"
 
-} catch (_: Exception) {
-
-Toast.makeText(
-this,
-"Kupon detayı açılamadı.",
-Toast.LENGTH_SHORT
-).show()
+else ->
+"BEKLİYOR"
 }
+}
+
+// =========================================================
+// AKTİF KUPON YÖNETİMİ DİYALOĞU
+// =========================================================
+
+private var historyDialog: AlertDialog? = null
+
+private fun refreshHistoryDialog() {
+
+// Eski pencereyi kapat.
+// Yeni pencereyi ÜSTÜNE açmıyoruz.
+historyDialog?.dismiss()
+
+historyDialog = null
+
+// Tek pencere olarak güncel halini açıyoruz.
+showHistory()
 }
 
 // =========================================================
@@ -3091,6 +3381,10 @@ this,
 Toast.LENGTH_SHORT
 ).show()
 
+historyDialog?.dismiss()
+
+historyDialog = null
+
 showHistory()
 }
 .show()
@@ -3131,7 +3425,36 @@ this,
 "🗑 Tüm kuponlar silindi.",
 Toast.LENGTH_SHORT
 ).show()
+
+historyDialog?.dismiss()
+
+historyDialog = null
 }
 .show()
+}
+
+// =========================================================
+// KAYITLARI OKU - YAN ETKİSİZ
+// =========================================================
+
+private fun getRecordsWithoutMigration(): JSONArray {
+
+val saved =
+prefs.getString(
+"records_json",
+null
+)
+
+if (
+!saved.isNullOrEmpty()
+) {
+
+try {
+return JSONArray(saved)
+} catch (_: Exception) {
+}
+}
+
+return JSONArray()
 }
 }
