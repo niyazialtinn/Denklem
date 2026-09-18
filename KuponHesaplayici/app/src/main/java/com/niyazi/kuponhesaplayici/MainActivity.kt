@@ -9,6 +9,8 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import org.json.JSONArray
@@ -46,6 +48,10 @@ Context.MODE_PRIVATE
 )
 }
 
+// Mevcut Kupon Yönetimi ekranının parçaları
+private var historyDialog: AlertDialog? = null
+private var historyList: LinearLayout? = null
+
 override fun onCreate(savedInstanceState: Bundle?) {
 super.onCreate(savedInstanceState)
 buildUi()
@@ -65,6 +71,7 @@ color: Int = darkTextColor
 ): TextView {
 
 return TextView(this).apply {
+
 text = value
 textSize = size
 setTextColor(color)
@@ -89,6 +96,7 @@ strokeColor: Int? = null
 ): GradientDrawable {
 
 return GradientDrawable().apply {
+
 setColor(fillColor)
 
 cornerRadius =
@@ -172,6 +180,7 @@ LinearLayout.LayoutParams(
 -1,
 LinearLayout.LayoutParams.WRAP_CONTENT
 ).apply {
+
 setMargins(
 0,
 0,
@@ -271,6 +280,7 @@ LinearLayout.LayoutParams(
 -1,
 dp(56)
 ).apply {
+
 setMargins(
 0,
 dp(8),
@@ -286,6 +296,7 @@ LinearLayout.LayoutParams(
 -1,
 LinearLayout.LayoutParams.WRAP_CONTENT
 ).apply {
+
 setMargins(
 0,
 0,
@@ -359,6 +370,7 @@ LinearLayout.LayoutParams(
 dp(46),
 1f
 ).apply {
+
 setMargins(
 dp(2),
 0,
@@ -794,9 +806,9 @@ currentFocus?.windowToken,
 resultView?.let { oldResult ->
 
 if (
-oldResult.parent ===
-container
+oldResult.parent === container
 ) {
+
 container.removeView(
 oldResult
 )
@@ -1250,12 +1262,9 @@ null
 
 dialog.setOnShowListener {
 
-val save =
 dialog.getButton(
 AlertDialog.BUTTON_POSITIVE
-)
-
-save.setOnClickListener {
+).setOnClickListener {
 
 var name =
 nameInput.text
@@ -1284,7 +1293,7 @@ dialog.show()
 }
 
 // =========================================================
-// YENİ KUPON KAYDI
+// KUPON KAYDI
 // =========================================================
 
 private fun saveRecord(
@@ -1327,10 +1336,6 @@ record.put(
 "payout",
 totalPayout
 )
-
-// =====================================================
-// HER MAÇ ARTIK AYRI BİR OBJE
-// =====================================================
 
 val matches =
 JSONArray()
@@ -1391,7 +1396,6 @@ record.put(
 matches
 )
 
-// Eski uyumluluk için oranları da tutuyoruz.
 val oddsArray =
 JSONArray()
 
@@ -1402,6 +1406,11 @@ oddsArray.put(odd)
 record.put(
 "odds",
 oddsArray
+)
+
+record.put(
+"status",
+"BEKLİYOR"
 )
 
 val records =
@@ -1427,7 +1436,7 @@ Toast.LENGTH_SHORT
 }
 
 // =========================================================
-// KAYITLARI AL
+// KAYITLARI GETİR
 // =========================================================
 
 private fun getRecords(): JSONArray {
@@ -1447,7 +1456,30 @@ try {
 val records =
 JSONArray(saved)
 
-migrateRecords(records)
+var changed = false
+
+for (
+i in 0 until records.length()
+) {
+
+val obj =
+records.getJSONObject(i)
+
+if (
+obj.optJSONArray(
+"matches"
+) == null
+) {
+
+migrateRecord(obj)
+
+changed = true
+}
+}
+
+if (changed) {
+saveRecords(records)
+}
 
 return records
 
@@ -1455,7 +1487,6 @@ return records
 }
 }
 
-// Eski V2/V3 kayıt sistemi
 val oldRecords: Set<String> =
 prefs.getStringSet(
 "records",
@@ -1540,6 +1571,8 @@ obj.put(
 "BEKLİYOR"
 )
 
+migrateRecord(obj)
+
 result.put(obj)
 
 } else if (
@@ -1604,14 +1637,14 @@ obj.put(
 "BEKLİYOR"
 )
 
+migrateRecord(obj)
+
 result.put(obj)
 }
 
 } catch (_: Exception) {
 }
 }
-
-migrateRecords(result)
 
 if (
 result.length() > 0
@@ -1623,35 +1656,26 @@ return result
 }
 
 // =========================================================
-// ESKİ KAYITLARI YENİ MAÇ SİSTEMİNE ÇEVİR
+// ESKİ KAYDI MAÇ BAZLI HALE GETİR
 // =========================================================
 
-private fun migrateRecords(
-records: JSONArray
+private fun migrateRecord(
+record: JSONObject
 ) {
 
-for (
-i in 0 until records.length()
-) {
-
-try {
-
-val obj =
-records.getJSONObject(i)
-
-val existingMatches =
-obj.optJSONArray(
+val existing =
+record.optJSONArray(
 "matches"
 )
 
 if (
-existingMatches != null
+existing != null
 ) {
-continue
+return
 }
 
 val odds =
-obj.optJSONArray(
+record.optJSONArray(
 "odds"
 )
 
@@ -1659,11 +1683,11 @@ if (
 odds == null ||
 odds.length() == 0
 ) {
-continue
+return
 }
 
 val bankroll =
-obj.optDouble(
+record.optDouble(
 "bankroll",
 0.0
 )
@@ -1671,12 +1695,12 @@ obj.optDouble(
 var reciprocal = 0.0
 
 for (
-oddIndex in 0 until odds.length()
+i in 0 until odds.length()
 ) {
 
 val odd =
 odds.optDouble(
-oddIndex,
+i,
 0.0
 )
 
@@ -1692,12 +1716,12 @@ val matches =
 JSONArray()
 
 for (
-matchIndex in 0 until odds.length()
+i in 0 until odds.length()
 ) {
 
 val odd =
 odds.optDouble(
-matchIndex,
+i,
 0.0
 )
 
@@ -1711,21 +1735,21 @@ val stake =
 if (
 reciprocal > 0.0
 ) {
+
 bankroll /
 (odd * reciprocal)
+
 } else {
+
 0.0
 }
-
-val payout =
-stake * odd
 
 val match =
 JSONObject()
 
 match.put(
 "number",
-matchIndex + 1
+i + 1
 )
 
 match.put(
@@ -1740,7 +1764,7 @@ stake
 
 match.put(
 "payout",
-payout
+stake * odd
 )
 
 match.put(
@@ -1751,20 +1775,15 @@ match.put(
 matches.put(match)
 }
 
-obj.put(
+record.put(
 "matches",
 matches
 )
 
-// Eski toplam durumunu artık kullanmıyoruz.
-obj.put(
+record.put(
 "status",
 "BEKLİYOR"
 )
-
-} catch (_: Exception) {
-}
-}
 }
 
 private fun saveRecords(
@@ -1911,6 +1930,7 @@ if (
 status != "BEKLİYOR" &&
 matchProfit > highestProfit
 ) {
+
 highestProfit =
 matchProfit
 }
@@ -1930,6 +1950,7 @@ completed.toDouble() *
 100.0
 
 } else {
+
 0.0
 }
 
@@ -1943,6 +1964,7 @@ totalInvestment *
 100.0
 
 } else {
+
 0.0
 }
 
@@ -1972,10 +1994,6 @@ dp(18),
 dp(8)
 )
 }
-
-// =====================================================
-// BANKROLL
-// =====================================================
 
 val balanceCard =
 LinearLayout(this).apply {
@@ -2045,10 +2063,6 @@ dp(10)
 )
 }
 )
-
-// =====================================================
-// MAÇ İSTATİSTİKLERİ
-// =====================================================
 
 val stats =
 LinearLayout(this).apply {
@@ -2247,10 +2261,6 @@ dp(10)
 }
 )
 
-// =====================================================
-// BANKROLL AYARI
-// =====================================================
-
 val bankrollButton =
 Button(this).apply {
 
@@ -2299,136 +2309,7 @@ null
 }
 
 // =========================================================
-// MAÇLARI GETİR
-// =========================================================
-
-private fun getMatchesForRecord(
-record: JSONObject
-): JSONArray {
-
-val existing =
-record.optJSONArray(
-"matches"
-)
-
-if (
-existing != null
-) {
-return existing
-}
-
-// Güvenlik amaçlı eski kayıt dönüşümü
-val odds =
-record.optJSONArray(
-"odds"
-)
-
-val result =
-JSONArray()
-
-if (
-odds == null
-) {
-return result
-}
-
-val bankroll =
-record.optDouble(
-"bankroll",
-0.0
-)
-
-var reciprocal = 0.0
-
-for (
-i in 0 until odds.length()
-) {
-
-val odd =
-odds.optDouble(
-i,
-0.0
-)
-
-if (
-odd > 0.0
-) {
-reciprocal +=
-1.0 / odd
-}
-}
-
-for (
-i in 0 until odds.length()
-) {
-
-val odd =
-odds.optDouble(
-i,
-0.0
-)
-
-if (
-odd <= 0.0
-) {
-continue
-}
-
-val stake =
-if (
-reciprocal > 0.0
-) {
-bankroll /
-(odd * reciprocal)
-} else {
-0.0
-}
-
-val match =
-JSONObject()
-
-match.put(
-"number",
-i + 1
-)
-
-match.put(
-"odd",
-odd
-)
-
-match.put(
-"stake",
-stake
-)
-
-match.put(
-"payout",
-stake * odd
-)
-
-match.put(
-"status",
-"BEKLİYOR"
-)
-
-result.put(match)
-}
-
-record.put(
-"matches",
-result
-)
-
-saveRecords(
-getRecordsWithoutMigration()
-)
-
-return result
-}
-
-// =========================================================
-// BANKROLL DİYALOĞU
+// BANKROLL
 // =========================================================
 
 private fun showBankrollDialog() {
@@ -2569,6 +2450,14 @@ Toast.LENGTH_SHORT
 
 private fun showHistory() {
 
+// Zaten açıksa ikinci pencere oluşturma.
+if (
+historyDialog != null &&
+historyDialog!!.isShowing
+) {
+return
+}
+
 val records =
 getRecords()
 
@@ -2592,41 +2481,29 @@ orientation =
 LinearLayout.VERTICAL
 
 setPadding(
-dp(14),
+dp(12),
 dp(6),
-dp(14),
+dp(12),
 dp(6)
 )
 }
 
 val scroll =
-ScrollView(this)
+ScrollView(this).apply {
 
-val list =
+isFillViewport = true
+}
+
+historyList =
 LinearLayout(this).apply {
 
 orientation =
 LinearLayout.VERTICAL
 }
 
-for (
-index in records.length() - 1 downTo 0
-) {
-
-val obj =
-records.getJSONObject(
-index
+scroll.addView(
+historyList
 )
-
-addHistoryCard(
-list,
-records,
-index,
-obj
-)
-}
-
-scroll.addView(list)
 
 layout.addView(
 scroll,
@@ -2669,6 +2546,7 @@ dp(8),
 }
 )
 
+historyDialog =
 AlertDialog.Builder(this)
 .setTitle(
 "📋 Kupon Yönetimi"
@@ -2678,7 +2556,50 @@ AlertDialog.Builder(this)
 "KAPAT",
 null
 )
-.show()
+.create()
+
+historyDialog!!.setOnDismissListener {
+
+historyDialog = null
+historyList = null
+}
+
+historyDialog!!.show()
+
+rebuildHistoryList()
+}
+
+// =========================================================
+// KUPON LİSTESİNİ AYNI PENCEREDE YENİLE
+// =========================================================
+
+private fun rebuildHistoryList() {
+
+val list =
+historyList
+?: return
+
+list.removeAllViews()
+
+val records =
+getRecords()
+
+for (
+index in records.length() - 1 downTo 0
+) {
+
+val obj =
+records.getJSONObject(
+index
+)
+
+addHistoryCard(
+list,
+records,
+index,
+obj
+)
+}
 }
 
 // =========================================================
@@ -2741,10 +2662,6 @@ Color.rgb(
 )
 }
 
-// =====================================================
-// BAŞLIK
-// =====================================================
-
 card.addView(
 makeText(
 "🎫 $name",
@@ -2763,10 +2680,6 @@ grayTextColor
 )
 )
 
-// =====================================================
-// MAÇLAR
-// =====================================================
-
 for (
 matchIndex in 0 until matches.length()
 ) {
@@ -2784,10 +2697,6 @@ matchIndex,
 match
 )
 }
-
-// =====================================================
-// KUPON SİL
-// =====================================================
 
 val delete =
 Button(this).apply {
@@ -2858,7 +2767,7 @@ dp(7)
 }
 
 // =========================================================
-// TEK MAÇ DURUM KARTI
+// TEK MAÇ KARTI
 // =========================================================
 
 private fun addMatchStatusCard(
@@ -2925,7 +2834,6 @@ statusColor(status)
 )
 }
 
-// Üst satır
 val top =
 LinearLayout(this).apply {
 
@@ -2976,18 +2884,22 @@ payout
 )
 )
 
-card.addView(
+// Bu TextView'i tag'e koyuyoruz.
+// Böylece sadece bu maçın yazısı güncellenecek.
+val statusText =
 makeText(
 "Durum: $status",
 13f,
 true,
 statusColor(status)
 )
-)
 
-// =====================================================
-// DURUM BUTONLARI
-// =====================================================
+statusText.tag =
+"match_status_text"
+
+card.addView(
+statusText
+)
 
 val buttons =
 LinearLayout(this).apply {
@@ -3008,7 +2920,9 @@ setMatchStatus(
 records,
 couponIndex,
 matchIndex,
-"BEKLİYOR"
+"BEKLİYOR",
+statusText,
+card
 )
 }
 
@@ -3024,7 +2938,9 @@ setMatchStatus(
 records,
 couponIndex,
 matchIndex,
-"KAZANDI"
+"KAZANDI",
+statusText,
+card
 )
 }
 
@@ -3040,7 +2956,9 @@ setMatchStatus(
 records,
 couponIndex,
 matchIndex,
-"KAYBETTİ"
+"KAYBETTİ",
+statusText,
+card
 )
 }
 
@@ -3136,7 +3054,7 @@ orangeColor
 }
 
 // =========================================================
-// DURUM BUTONU
+// DURUM BUTONLARI
 // =========================================================
 
 private fun smallStatusButton(
@@ -3177,14 +3095,20 @@ color
 }
 
 // =========================================================
-// TEK MAÇ DURUMU DEĞİŞTİR
+// MAÇ DURUMUNU DEĞİŞTİR
+//
+// ÖNEMLİ:
+// Burada hiçbir şekilde showHistory()
+// veya yeni AlertDialog çağrılmıyor.
 // =========================================================
 
 private fun setMatchStatus(
 records: JSONArray,
 couponIndex: Int,
 matchIndex: Int,
-status: String
+status: String,
+statusText: TextView,
+matchCard: LinearLayout
 ) {
 
 try {
@@ -3211,6 +3135,7 @@ matches.getJSONObject(
 matchIndex
 )
 
+// Sadece ilgili maçın durumu değişiyor.
 match.put(
 "status",
 status
@@ -3221,8 +3146,7 @@ coupon.put(
 matches
 )
 
-// Kuponun genel status alanı artık
-// sadece bilgi amaçlı tutuluyor.
+// Genel kupon durumu bilgi amaçlı.
 coupon.put(
 "status",
 calculateCouponStatus(
@@ -3234,19 +3158,40 @@ saveRecords(
 records
 )
 
+// =================================================
+// SADECE MEVCUT MAÇ KARTINI GÜNCELLE
+// =================================================
+
+statusText.text =
+"Durum: $status"
+
+statusText.setTextColor(
+statusColor(status)
+)
+
+matchCard.setBackgroundDrawable(
+makeRoundedBackground(
+Color.rgb(
+248,
+250,
+253
+),
+13f,
+statusColor(status)
+)
+)
+
 Toast.makeText(
 this,
 "Maç ${matchIndex + 1}: $status",
 Toast.LENGTH_SHORT
 ).show()
 
-// =================================================
-// ÖNEMLİ:
-// showHistory() ÇAĞRILMIYOR.
-// Böylece ikinci AlertDialog açılmıyor.
-// =================================================
-
-refreshHistoryDialog()
+// BURADA:
+// showHistory()
+// refreshHistoryDialog()
+// yeni AlertDialog
+// YOK.
 
 } catch (_: Exception) {
 
@@ -3259,7 +3204,7 @@ Toast.LENGTH_SHORT
 }
 
 // =========================================================
-// KUPON GENEL DURUMU
+// GENEL KUPON DURUMU
 // =========================================================
 
 private fun calculateCouponStatus(
@@ -3312,21 +3257,29 @@ else ->
 }
 
 // =========================================================
-// AKTİF KUPON YÖNETİMİ DİYALOĞU
+// MAÇLARI GETİR
 // =========================================================
 
-private var historyDialog: AlertDialog? = null
+private fun getMatchesForRecord(
+record: JSONObject
+): JSONArray {
 
-private fun refreshHistoryDialog() {
+val existing =
+record.optJSONArray(
+"matches"
+)
 
-// Eski pencereyi kapat.
-// Yeni pencereyi ÜSTÜNE açmıyoruz.
-historyDialog?.dismiss()
+if (
+existing != null
+) {
+return existing
+}
 
-historyDialog = null
+migrateRecord(record)
 
-// Tek pencere olarak güncel halini açıyoruz.
-showHistory()
+return record.optJSONArray(
+"matches"
+) ?: JSONArray()
 }
 
 // =========================================================
@@ -3381,17 +3334,15 @@ this,
 Toast.LENGTH_SHORT
 ).show()
 
-historyDialog?.dismiss()
-
-historyDialog = null
-
-showHistory()
+// Mevcut pencereyi kapatmıyoruz.
+// Sadece listeyi yeniliyoruz.
+rebuildHistoryList()
 }
 .show()
 }
 
 // =========================================================
-// TÜMÜNÜ SİL
+// TÜM KUPONLARI SİL
 // =========================================================
 
 private fun confirmDeleteAll() {
@@ -3427,34 +3378,7 @@ Toast.LENGTH_SHORT
 ).show()
 
 historyDialog?.dismiss()
-
-historyDialog = null
 }
 .show()
-}
-
-// =========================================================
-// KAYITLARI OKU - YAN ETKİSİZ
-// =========================================================
-
-private fun getRecordsWithoutMigration(): JSONArray {
-
-val saved =
-prefs.getString(
-"records_json",
-null
-)
-
-if (
-!saved.isNullOrEmpty()
-) {
-
-try {
-return JSONArray(saved)
-} catch (_: Exception) {
-}
-}
-
-return JSONArray()
 }
 }
