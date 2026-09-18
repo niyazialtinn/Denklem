@@ -25,13 +25,13 @@ class MainActivity : Activity() {
 
     private var resultView: LinearLayout? = null
 
-    private val blue = Color.rgb(21, 101, 192)
-    private val darkBlue = Color.rgb(13, 71, 161)
-    private val lightBlue = Color.rgb(232, 240, 254)
-    private val background = Color.rgb(246, 248, 252)
-    private val darkText = Color.rgb(30, 35, 45)
-    private val grayText = Color.rgb(100, 108, 120)
-    private val green = Color.rgb(46, 125, 50)
+    private val blueColor = Color.rgb(21, 101, 192)
+    private val darkBlueColor = Color.rgb(13, 71, 161)
+    private val lightBlueColor = Color.rgb(232, 240, 254)
+    private val pageBackgroundColor = Color.rgb(246, 248, 252)
+    private val darkTextColor = Color.rgb(30, 35, 45)
+    private val grayTextColor = Color.rgb(100, 108, 120)
+    private val greenColor = Color.rgb(46, 125, 50)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,7 @@ class MainActivity : Activity() {
         value: String,
         size: Float,
         bold: Boolean = false,
-        color: Int = darkText
+        color: Int = darkTextColor
     ): TextView {
 
         return TextView(this).apply {
@@ -69,20 +69,23 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun roundedBackground(
-        color: Int,
+    private fun makeRoundedBackground(
+        fillColor: Int,
         radius: Float = 18f,
         strokeColor: Int? = null
     ): GradientDrawable {
 
         return GradientDrawable().apply {
 
-            setColor(color)
+            setColor(fillColor)
 
             cornerRadius = dp(radius.toInt()).toFloat()
 
             if (strokeColor != null) {
-                setStroke(dp(1), strokeColor)
+                setStroke(
+                    dp(1),
+                    strokeColor
+                )
             }
         }
     }
@@ -100,7 +103,9 @@ class MainActivity : Activity() {
                 dp(16)
             )
 
-            setBackgroundColor(background)
+            setBackgroundColor(
+                pageBackgroundColor
+            )
         }
 
         // BAŞLIK
@@ -115,9 +120,11 @@ class MainActivity : Activity() {
                 dp(16)
             )
 
-            background = roundedBackground(
-                blue,
-                20f
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    blueColor,
+                    20f
+                )
             )
         }
 
@@ -145,7 +152,13 @@ class MainActivity : Activity() {
                 -1,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                setMargins(0, 0, 0, dp(14))
+
+                setMargins(
+                    0,
+                    0,
+                    0,
+                    dp(14)
+                )
             }
         )
 
@@ -161,10 +174,12 @@ class MainActivity : Activity() {
                 dp(14)
             )
 
-            background = roundedBackground(
-                Color.WHITE,
-                18f,
-                Color.rgb(225, 229, 235)
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    Color.WHITE,
+                    18f,
+                    Color.rgb(225, 229, 235)
+                )
             )
         }
 
@@ -173,7 +188,7 @@ class MainActivity : Activity() {
                 "💰  KASA",
                 15f,
                 true,
-                darkBlue
+                darkBlueColor
             )
         )
 
@@ -191,16 +206,20 @@ class MainActivity : Activity() {
 
             gravity = Gravity.CENTER_VERTICAL
 
-            setTextColor(darkText)
+            setTextColor(
+                darkTextColor
+            )
 
             setSelectAllOnFocus(true)
 
             hint = "Örn. 3000 TL"
 
-            background = roundedBackground(
-                Color.rgb(248, 249, 252),
-                12f,
-                Color.rgb(210, 215, 223)
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    Color.rgb(248, 249, 252),
+                    12f,
+                    Color.rgb(210, 215, 223)
+                )
             )
 
             setPadding(
@@ -217,6 +236,7 @@ class MainActivity : Activity() {
                 -1,
                 dp(56)
             ).apply {
+
                 setMargins(
                     0,
                     dp(8),
@@ -232,7 +252,13 @@ class MainActivity : Activity() {
                 -1,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                setMargins(0, 0, 0, dp(12))
+
+                setMargins(
+                    0,
+                    0,
+                    0,
+                    dp(12)
+                )
             }
         )
 
@@ -271,7 +297,12 @@ class MainActivity : Activity() {
 
                 textSize = 14f
 
-                setPadding(0, 0, 0, 0)
+                setPadding(
+                    0,
+                    0,
+                    0,
+                    0
+                )
 
                 setOnClickListener {
 
@@ -340,9 +371,11 @@ class MainActivity : Activity() {
 
             if (number == count) {
 
-                button.background = roundedBackground(
-                    blue,
-                    12f
+                button.setBackgroundDrawable(
+                    makeRoundedBackground(
+                        blueColor,
+                        12f
+                    )
                 )
 
                 button.setTextColor(
@@ -351,14 +384,16 @@ class MainActivity : Activity() {
 
             } else {
 
-                button.background = roundedBackground(
-                    Color.WHITE,
-                    12f,
-                    Color.rgb(220, 224, 230)
+                button.setBackgroundDrawable(
+                    makeRoundedBackground(
+                        Color.WHITE,
+                        12f,
+                        Color.rgb(220, 224, 230)
+                    )
                 )
 
                 button.setTextColor(
-                    darkText
+                    darkTextColor
                 )
             }
         }
@@ -379,11 +414,9 @@ class MainActivity : Activity() {
                 "🎯  ORANLAR",
                 16f,
                 true,
-                darkBlue
+                darkBlueColor
             )
         )
-
-        val defaults = mutableListOf<String>()
 
         val defaultValues = listOf(
             "1.60",
@@ -395,13 +428,6 @@ class MainActivity : Activity() {
             "1.85",
             "1.90"
         )
-
-        for (i in 0 until count) {
-
-            defaults.add(
-                defaultValues[i]
-            )
-        }
 
         for (i in 0 until count) {
 
@@ -418,10 +444,12 @@ class MainActivity : Activity() {
                     dp(6)
                 )
 
-                background = roundedBackground(
-                    Color.WHITE,
-                    15f,
-                    Color.rgb(225, 229, 235)
+                setBackgroundDrawable(
+                    makeRoundedBackground(
+                        Color.WHITE,
+                        15f,
+                        Color.rgb(225, 229, 235)
+                    )
                 )
             }
 
@@ -443,7 +471,7 @@ class MainActivity : Activity() {
             val e = EditText(this).apply {
 
                 setText(
-                    defaults[i]
+                    defaultValues[i]
                 )
 
                 inputType =
@@ -456,13 +484,18 @@ class MainActivity : Activity() {
 
                 gravity = Gravity.CENTER
 
-                setTextColor(darkBlue)
+                setTextColor(
+                    darkBlueColor
+                )
 
-                typeface = Typeface.DEFAULT_BOLD
+                typeface =
+                    Typeface.DEFAULT_BOLD
 
-                background = roundedBackground(
-                    lightBlue,
-                    12f
+                setBackgroundDrawable(
+                    makeRoundedBackground(
+                        lightBlueColor,
+                        12f
+                    )
                 )
 
                 setPadding(
@@ -490,6 +523,7 @@ class MainActivity : Activity() {
                     -1,
                     dp(64)
                 ).apply {
+
                     setMargins(
                         0,
                         dp(4),
@@ -500,7 +534,7 @@ class MainActivity : Activity() {
             )
         }
 
-        // HESAPLA BUTONU
+        // HESAPLA
         val calc = Button(this).apply {
 
             text = "HESAPLA"
@@ -509,15 +543,18 @@ class MainActivity : Activity() {
 
             textSize = 18f
 
-            typeface = Typeface.DEFAULT_BOLD
+            typeface =
+                Typeface.DEFAULT_BOLD
 
             setTextColor(
                 Color.WHITE
             )
 
-            background = roundedBackground(
-                darkBlue,
-                16f
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    darkBlueColor,
+                    16f
+                )
             )
 
             setOnClickListener {
@@ -600,10 +637,12 @@ class MainActivity : Activity() {
                 dp(14)
             )
 
-            background = roundedBackground(
-                Color.WHITE,
-                18f,
-                Color.rgb(225, 229, 235)
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    Color.WHITE,
+                    18f,
+                    Color.rgb(225, 229, 235)
+                )
             )
         }
 
@@ -614,7 +653,7 @@ class MainActivity : Activity() {
                 "📊  SONUÇLAR",
                 18f,
                 true,
-                darkBlue
+                darkBlueColor
             )
         )
 
@@ -634,7 +673,6 @@ class MainActivity : Activity() {
             return
         }
 
-        // Ters oranlar toplamı
         var reciprocal = 0.0
 
         for (odd in odds) {
@@ -644,7 +682,7 @@ class MainActivity : Activity() {
 
         var total = 0.0
 
-        // MAÇ SONUÇLARI
+        // Maç sonuçları
         for (i in odds.indices) {
 
             val odd = odds[i]
@@ -660,30 +698,40 @@ class MainActivity : Activity() {
 
             total += stake
 
-            val matchCard = LinearLayout(this).apply {
+            val matchCard =
+                LinearLayout(this).apply {
 
-                orientation = LinearLayout.VERTICAL
+                    orientation =
+                        LinearLayout.VERTICAL
 
-                setPadding(
-                    dp(12),
-                    dp(9),
-                    dp(12),
-                    dp(9)
-                )
+                    setPadding(
+                        dp(12),
+                        dp(9),
+                        dp(12),
+                        dp(9)
+                    )
 
-                background = roundedBackground(
-                    Color.rgb(248, 250, 253),
-                    13f,
-                    Color.rgb(225, 229, 235)
-                )
-            }
+                    setBackgroundDrawable(
+                        makeRoundedBackground(
+                            Color.rgb(248, 250, 253),
+                            13f,
+                            Color.rgb(225, 229, 235)
+                        )
+                    )
+                }
 
             matchCard.addView(
                 text(
-                    "Maç ${i + 1}   •   Oran ${String.format(Locale.US, "%.2f", odd)}",
+                    "Maç ${i + 1}   •   Oran ${
+                        String.format(
+                            Locale.US,
+                            "%.2f",
+                            odd
+                        )
+                    }",
                     15f,
                     true,
-                    darkText
+                    darkTextColor
                 )
             )
 
@@ -707,7 +755,7 @@ class MainActivity : Activity() {
                     ),
                     14f,
                     true,
-                    green
+                    greenColor
                 )
             )
 
@@ -720,7 +768,7 @@ class MainActivity : Activity() {
                     ),
                     13f,
                     false,
-                    grayText
+                    grayTextColor
                 )
             )
 
@@ -730,6 +778,7 @@ class MainActivity : Activity() {
                     -1,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
+
                     setMargins(
                         0,
                         dp(5),
@@ -740,33 +789,37 @@ class MainActivity : Activity() {
             )
         }
 
-        // ÖZET
         val payout =
             bankroll / reciprocal
 
-        val summary = LinearLayout(this).apply {
+        // ÖZET
+        val summary =
+            LinearLayout(this).apply {
 
-            orientation = LinearLayout.VERTICAL
+                orientation =
+                    LinearLayout.VERTICAL
 
-            setPadding(
-                dp(14),
-                dp(12),
-                dp(14),
-                dp(12)
-            )
+                setPadding(
+                    dp(14),
+                    dp(12),
+                    dp(14),
+                    dp(12)
+                )
 
-            background = roundedBackground(
-                lightBlue,
-                15f
-            )
-        }
+                setBackgroundDrawable(
+                    makeRoundedBackground(
+                        lightBlueColor,
+                        15f
+                    )
+                )
+            }
 
         summary.addView(
             text(
                 "💰  KUPON ÖZETİ",
                 16f,
                 true,
-                darkBlue
+                darkBlueColor
             )
         )
 
@@ -791,7 +844,7 @@ class MainActivity : Activity() {
                 ),
                 18f,
                 true,
-                green
+                greenColor
             )
         )
 
@@ -815,7 +868,7 @@ class MainActivity : Activity() {
                 ),
                 15f,
                 true,
-                darkBlue
+                darkBlueColor
             )
         )
 
@@ -825,6 +878,7 @@ class MainActivity : Activity() {
                 -1,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
+
                 setMargins(
                     0,
                     dp(12),
