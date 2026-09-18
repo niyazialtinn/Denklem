@@ -65,26 +65,110 @@ class MainActivity : android.app.Activity() {
     }
 
     private fun calculate() {
-        val bankroll=kasa.text.toString().replace(',','.').toDoubleOrNull() ?: 0.0
-        val odds=oddsFields.map { it.text.toString().replace(',','.').toDoubleOrNull() ?: 0.0 }
-        val valid=bankroll>0 && odds.all { it>0 }
-        val result=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(12),dp(10),dp(12),dp(10)); setBackgroundColor(Color.WHITE) }
-        result.addView(text("SONUÇLAR",18f,true))
-        if(!valid){ result.addView(text("Kasa ve tüm oranları geçerli giriniz.",14f)); container.addView(result); return }
-        val reciprocal: Double = odds.sumOf { odd: Double -> 1.0 / odd }
-        var total=0.0
-        odds.forEachIndexed { i,o ->
-            val stake=bankroll/(o*reciprocal)
-            val payout=stake*o
-            val net=payout-stake
-            total+=stake
-            val line=TextView(this).apply { text=String.format(Locale.US,"Maç %d  |  Oran %.2f  |  Yatırım %.2f TL  |  Gelirse %.2f TL  |  Net %.2f TL",i+1,o,stake,payout,net); textSize=14f; setTextColor(Color.DKGRAY); setPadding(0,dp(7),0,dp(7)) }
-            result.addView(line)
+val bankroll = kasa.text.toString()
+        .replace(",", ".")
+        .toDoubleOrNull()
+
+    val odds = mutableListOf<Double>()
+
+    for (field in oddsFields) {
+        val value = field.text.toString()
+            .replace(",", ".")
+            .toDoubleOrNull()
+
+        if (value != null) {
+            odds.add(value)
         }
-        result.addView(text(String.format(Locale.US,"Toplam yatırım: %.2f TL",total),16f,true))
-        result.addView(text(String.format(Locale.US,"Herhangi biri gelirse geri dönüş: %.2f TL",payout),16f,true))
-        result.addView(text(String.format(Locale.US,"Kalan kasa: %.2f TL",bankroll-total),16f,true))
-        result.addView(text(String.format(Locale.US,"Geri dönüş / başlangıç kasa: %.2f%%",(payout/bankroll)*100),16f,true))
-        container.addView(result)
     }
+
+    val valid = bankroll != null &&
+            bankroll > 0.0 &&
+            odds.size == oddsFields.size &&
+            odds.all { it > 0.0 }
+
+    val result = LinearLayout(this).apply {
+        orientation = LinearLayout.VERTICAL
+    }
+
+    result.addView(TextView(this).apply {
+        text = "SONUÇLAR"
+        textSize = 18f
+    })
+
+    if (!valid) {
+        result.addView(TextView(this).apply {
+            text = "Kasa ve tüm oranları geçerli giriniz."
+        })
+
+        container.addView(result)
+        return
+    }
+
+    val startingBankroll = bankroll!!
+
+    var reciprocal = 0.0
+
+    for (odd in odds) {
+        reciprocal += 1.0 / odd
+    }
+
+    var totalStake = 0.0
+
+    for (index in odds.indices) {
+        val odd = odds[index]
+
+        val stake = startingBankroll / (odd * reciprocal)
+        val payout = stake * odd
+
+        totalStake += stake
+
+        val line = TextView(this).apply {
+            text = String.format(
+                Locale.US,
+                "Maç %d | Oran: %.2f | Yatırım: %.2f TL | Geri dönüş: %.2f TL",
+                index + 1,
+                odd,
+                stake,
+                payout
+            )
+        }
+
+        result.addView(line)
+    }
+
+    val payout = startingBankroll / reciprocal
+
+    result.addView(TextView(this).apply {
+        text = String.format(
+            Locale.US,
+            "Toplam yatırım: %.2f TL",
+            totalStake
+        )
+    })
+
+    result.addView(TextView(this).apply {
+        text = String.format(
+            Locale.US,
+            "Herhangi biri gelirse geri dönüş: %.2f TL",
+            payout
+        )
+    })
+
+    result.addView(TextView(this).apply {
+        text = String.format(
+            Locale.US,
+            "Kalan kasa: %.2f TL",
+            startingBankroll - totalStake
+        )
+    })
+
+    result.addView(TextView(this).apply {
+        text = String.format(
+            Locale.US,
+            "Geri dönüş / başlangıç kasa: %.2f",
+            payout / startingBankroll
+        )
+    })
+
+    container.addView(result)
 }
