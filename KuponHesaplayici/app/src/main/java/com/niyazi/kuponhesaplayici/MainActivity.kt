@@ -1,14 +1,16 @@
 package com.niyazi.kuponhesaplayici
 
 import android.app.Activity
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.content.Context
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.widget.*
-
 import java.util.Locale
 
 class MainActivity : Activity() {
@@ -19,11 +21,21 @@ class MainActivity : Activity() {
     private var count = 3
 
     private val oddsFields = mutableListOf<EditText>()
+    private val matchButtons = mutableListOf<Button>()
 
     private var resultView: LinearLayout? = null
 
+    private val blue = Color.rgb(21, 101, 192)
+    private val darkBlue = Color.rgb(13, 71, 161)
+    private val lightBlue = Color.rgb(232, 240, 254)
+    private val background = Color.rgb(246, 248, 252)
+    private val darkText = Color.rgb(30, 35, 45)
+    private val grayText = Color.rgb(100, 108, 120)
+    private val green = Color.rgb(46, 125, 50)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         buildUi()
     }
 
@@ -34,13 +46,15 @@ class MainActivity : Activity() {
     private fun text(
         value: String,
         size: Float,
-        bold: Boolean = false
+        bold: Boolean = false,
+        color: Int = darkText
     ): TextView {
 
         return TextView(this).apply {
+
             text = value
             textSize = size
-            setTextColor(Color.rgb(30, 30, 30))
+            setTextColor(color)
 
             if (bold) {
                 typeface = Typeface.DEFAULT_BOLD
@@ -48,68 +62,123 @@ class MainActivity : Activity() {
 
             setPadding(
                 dp(4),
-                dp(6),
+                dp(5),
                 dp(4),
-                dp(6)
+                dp(5)
             )
+        }
+    }
+
+    private fun roundedBackground(
+        color: Int,
+        radius: Float = 18f,
+        strokeColor: Int? = null
+    ): GradientDrawable {
+
+        return GradientDrawable().apply {
+
+            setColor(color)
+
+            cornerRadius = dp(radius.toInt()).toFloat()
+
+            if (strokeColor != null) {
+                setStroke(dp(1), strokeColor)
+            }
         }
     }
 
     private fun buildUi() {
 
         val root = LinearLayout(this).apply {
+
+            orientation = LinearLayout.VERTICAL
+
+            setPadding(
+                dp(16),
+                dp(14),
+                dp(16),
+                dp(16)
+            )
+
+            setBackgroundColor(background)
+        }
+
+        // BAŞLIK
+        val header = LinearLayout(this).apply {
+
+            orientation = LinearLayout.VERTICAL
+
+            setPadding(
+                dp(18),
+                dp(16),
+                dp(18),
+                dp(16)
+            )
+
+            background = roundedBackground(
+                blue,
+                20f
+            )
+        }
+
+        header.addView(
+            text(
+                "Kupon Hesaplayıcı",
+                25f,
+                true,
+                Color.WHITE
+            )
+        )
+
+        header.addView(
+            text(
+                "Eşit geri dönüş hesaplama",
+                14f,
+                false,
+                Color.WHITE
+            )
+        )
+
+        root.addView(
+            header,
+            LinearLayout.LayoutParams(
+                -1,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(0, 0, 0, dp(14))
+            }
+        )
+
+        // KASA KARTI
+        val kasaCard = LinearLayout(this).apply {
+
             orientation = LinearLayout.VERTICAL
 
             setPadding(
                 dp(16),
                 dp(12),
                 dp(16),
-                dp(16)
+                dp(14)
             )
 
-            setBackgroundColor(
-                Color.rgb(245, 247, 250)
+            background = roundedBackground(
+                Color.WHITE,
+                18f,
+                Color.rgb(225, 229, 235)
             )
         }
 
-        val title = text(
-            "🎯 Kupon Hesaplayıcı",
-            25f,
-            true
-        )
-
-        title.setTextColor(
-            Color.rgb(21, 101, 192)
-        )
-
-        title.gravity = Gravity.CENTER
-
-        root.addView(
-            title,
-            LinearLayout.LayoutParams(
-                -1,
-                dp(55)
-            )
-        )
-
-        val subtitle = text(
-            "Eşit Geri Dönüş Sistemi",
-            14f
-        )
-
-        subtitle.gravity = Gravity.CENTER
-
-        root.addView(subtitle)
-
-        root.addView(
+        kasaCard.addView(
             text(
-                "💰 Kasa Tutarı (TL)",
+                "💰  KASA",
                 15f,
-                true
+                true,
+                darkBlue
             )
         )
 
         kasa = EditText(this).apply {
+
             setText("3000")
 
             inputType =
@@ -118,40 +187,79 @@ class MainActivity : Activity() {
 
             setSingleLine()
 
-            textSize = 19f
+            textSize = 22f
 
-            gravity = Gravity.CENTER
+            gravity = Gravity.CENTER_VERTICAL
+
+            setTextColor(darkText)
+
+            setSelectAllOnFocus(true)
 
             hint = "Örn. 3000 TL"
+
+            background = roundedBackground(
+                Color.rgb(248, 249, 252),
+                12f,
+                Color.rgb(210, 215, 223)
+            )
+
+            setPadding(
+                dp(12),
+                0,
+                dp(12),
+                0
+            )
         }
 
-        root.addView(
+        kasaCard.addView(
             kasa,
             LinearLayout.LayoutParams(
                 -1,
-                dp(55)
-            )
+                dp(56)
+            ).apply {
+                setMargins(
+                    0,
+                    dp(8),
+                    0,
+                    0
+                )
+            }
         )
 
         root.addView(
+            kasaCard,
+            LinearLayout.LayoutParams(
+                -1,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(0, 0, 0, dp(12))
+            }
+        )
+
+        // MAÇ SEÇİMİ
+        root.addView(
             text(
-                "⚽ Maç Sayısı",
-                15f,
+                "Kaç maç?",
+                16f,
                 true
             )
         )
 
         val tabs = LinearLayout(this).apply {
+
             orientation = LinearLayout.HORIZONTAL
+
             gravity = Gravity.CENTER
 
             setPadding(
                 0,
-                dp(5),
+                dp(7),
                 0,
-                dp(8)
+                dp(12)
             )
         }
+
+        matchButtons.clear()
 
         for (n in 2..8) {
 
@@ -161,7 +269,9 @@ class MainActivity : Activity() {
 
                 isAllCaps = false
 
-                textSize = 13f
+                textSize = 14f
+
+                setPadding(0, 0, 0, 0)
 
                 setOnClickListener {
 
@@ -171,11 +281,13 @@ class MainActivity : Activity() {
                 }
             }
 
+            matchButtons.add(button)
+
             tabs.addView(
                 button,
                 LinearLayout.LayoutParams(
                     0,
-                    dp(48),
+                    dp(46),
                     1f
                 ).apply {
 
@@ -191,12 +303,16 @@ class MainActivity : Activity() {
 
         root.addView(tabs)
 
+        // KAYDIRILABİLİR ALAN
         container = LinearLayout(this).apply {
+
             orientation = LinearLayout.VERTICAL
         }
 
         val scrollView = ScrollView(this).apply {
+
             isFillViewport = true
+
             addView(container)
         }
 
@@ -214,6 +330,40 @@ class MainActivity : Activity() {
         buildOdds()
     }
 
+    private fun updateMatchButtons() {
+
+        for (i in matchButtons.indices) {
+
+            val button = matchButtons[i]
+
+            val number = i + 2
+
+            if (number == count) {
+
+                button.background = roundedBackground(
+                    blue,
+                    12f
+                )
+
+                button.setTextColor(
+                    Color.WHITE
+                )
+
+            } else {
+
+                button.background = roundedBackground(
+                    Color.WHITE,
+                    12f,
+                    Color.rgb(220, 224, 230)
+                )
+
+                button.setTextColor(
+                    darkText
+                )
+            }
+        }
+    }
+
     private fun buildOdds() {
 
         resultView = null
@@ -222,15 +372,20 @@ class MainActivity : Activity() {
 
         oddsFields.clear()
 
+        updateMatchButtons()
+
         container.addView(
             text(
-                "📋 Oranları Gir",
-                18f,
-                true
+                "🎯  ORANLAR",
+                16f,
+                true,
+                darkBlue
             )
         )
 
-        val defaultOdds = listOf(
+        val defaults = mutableListOf<String>()
+
+        val defaultValues = listOf(
             "1.60",
             "1.55",
             "1.75",
@@ -243,15 +398,30 @@ class MainActivity : Activity() {
 
         for (i in 0 until count) {
 
-            val row = LinearLayout(this).apply {
+            defaults.add(
+                defaultValues[i]
+            )
+        }
+
+        for (i in 0 until count) {
+
+            val card = LinearLayout(this).apply {
+
                 orientation = LinearLayout.HORIZONTAL
+
                 gravity = Gravity.CENTER_VERTICAL
 
                 setPadding(
-                    0,
-                    dp(2),
-                    0,
-                    dp(2)
+                    dp(14),
+                    dp(6),
+                    dp(10),
+                    dp(6)
+                )
+
+                background = roundedBackground(
+                    Color.WHITE,
+                    15f,
+                    Color.rgb(225, 229, 235)
                 )
             }
 
@@ -261,19 +431,19 @@ class MainActivity : Activity() {
                 true
             )
 
-            row.addView(
+            card.addView(
                 matchLabel,
                 LinearLayout.LayoutParams(
                     0,
-                    dp(55),
-                    0.40f
+                    dp(52),
+                    0.45f
                 )
             )
 
             val e = EditText(this).apply {
 
                 setText(
-                    defaultOdds[i]
+                    defaults[i]
                 )
 
                 inputType =
@@ -282,36 +452,76 @@ class MainActivity : Activity() {
 
                 setSingleLine()
 
-                textSize = 18f
+                textSize = 19f
 
                 gravity = Gravity.CENTER
 
-                hint = "Oran"
+                setTextColor(darkBlue)
+
+                typeface = Typeface.DEFAULT_BOLD
+
+                background = roundedBackground(
+                    lightBlue,
+                    12f
+                )
+
+                setPadding(
+                    dp(8),
+                    0,
+                    dp(8),
+                    0
+                )
             }
 
             oddsFields.add(e)
 
-            row.addView(
+            card.addView(
                 e,
                 LinearLayout.LayoutParams(
                     0,
-                    dp(55),
-                    0.60f
+                    dp(48),
+                    0.55f
                 )
             )
 
-            container.addView(row)
+            container.addView(
+                card,
+                LinearLayout.LayoutParams(
+                    -1,
+                    dp(64)
+                ).apply {
+                    setMargins(
+                        0,
+                        dp(4),
+                        0,
+                        dp(4)
+                    )
+                }
+            )
         }
 
+        // HESAPLA BUTONU
         val calc = Button(this).apply {
 
-            text = "🧮  HESAPLA"
+            text = "HESAPLA"
 
             isAllCaps = false
 
             textSize = 18f
 
+            typeface = Typeface.DEFAULT_BOLD
+
+            setTextColor(
+                Color.WHITE
+            )
+
+            background = roundedBackground(
+                darkBlue,
+                16f
+            )
+
             setOnClickListener {
+
                 calculate()
             }
         }
@@ -327,7 +537,7 @@ class MainActivity : Activity() {
                     0,
                     dp(12),
                     0,
-                    dp(12)
+                    dp(14)
                 )
             }
         )
@@ -337,6 +547,18 @@ class MainActivity : Activity() {
 
     private fun calculate() {
 
+        // Klavyeyi kapat
+        val imm =
+            getSystemService(
+                Context.INPUT_METHOD_SERVICE
+            ) as InputMethodManager
+
+        imm.hideSoftInputFromWindow(
+            currentFocus?.windowToken,
+            0
+        )
+
+        // Eski sonucu kaldır
         resultView?.let {
 
             if (it.parent === container) {
@@ -353,47 +575,46 @@ class MainActivity : Activity() {
                 .toDoubleOrNull()
                 ?: 0.0
 
-        val odds =
-            oddsFields.map {
+        val odds = oddsFields.map {
 
-                it.text
-                    .toString()
-                    .replace(',', '.')
-                    .toDoubleOrNull()
-                    ?: 0.0
-            }
+            it.text
+                .toString()
+                .replace(',', '.')
+                .toDoubleOrNull()
+                ?: 0.0
+        }
 
         val valid =
             bankroll > 0.0 &&
-                    odds.size == count &&
-                    odds.all {
-                        it > 0.0
-                    }
+                    odds.size == oddsFields.size &&
+                    odds.all { it > 0.0 }
 
-        val result =
-            LinearLayout(this).apply {
+        val result = LinearLayout(this).apply {
 
-                orientation = LinearLayout.VERTICAL
+            orientation = LinearLayout.VERTICAL
 
-                setPadding(
-                    dp(14),
-                    dp(12),
-                    dp(14),
-                    dp(16)
-                )
+            setPadding(
+                dp(14),
+                dp(14),
+                dp(14),
+                dp(14)
+            )
 
-                setBackgroundColor(
-                    Color.WHITE
-                )
-            }
+            background = roundedBackground(
+                Color.WHITE,
+                18f,
+                Color.rgb(225, 229, 235)
+            )
+        }
 
         resultView = result
 
         result.addView(
             text(
-                "📊 SONUÇLAR",
-                20f,
-                true
+                "📊  SONUÇLAR",
+                18f,
+                true,
+                darkBlue
             )
         )
 
@@ -401,8 +622,10 @@ class MainActivity : Activity() {
 
             result.addView(
                 text(
-                    "⚠️ Kasa ve tüm oranları geçerli giriniz.",
-                    15f
+                    "Kasa ve tüm oranları geçerli giriniz.",
+                    14f,
+                    false,
+                    Color.rgb(190, 40, 40)
                 )
             )
 
@@ -411,21 +634,23 @@ class MainActivity : Activity() {
             return
         }
 
+        // Ters oranlar toplamı
         var reciprocal = 0.0
 
         for (odd in odds) {
+
             reciprocal += 1.0 / odd
         }
 
         var total = 0.0
 
+        // MAÇ SONUÇLARI
         for (i in odds.indices) {
 
             val odd = odds[i]
 
             val stake =
-                bankroll /
-                        (odd * reciprocal)
+                bankroll / (odd * reciprocal)
 
             val payout =
                 stake * odd
@@ -435,105 +660,178 @@ class MainActivity : Activity() {
 
             total += stake
 
-            val line =
-                TextView(this).apply {
+            val matchCard = LinearLayout(this).apply {
 
-                    text = String.format(
-                        Locale.US,
-                        "Maç %d   |   Oran %.2f\nYatırım: %.2f TL   |   Geri Dönüş: %.2f TL\nNet: %.2f TL",
-                        i + 1,
-                        odd,
-                        stake,
-                        payout,
-                        net
-                    )
+                orientation = LinearLayout.VERTICAL
 
-                    textSize = 15f
+                setPadding(
+                    dp(12),
+                    dp(9),
+                    dp(12),
+                    dp(9)
+                )
 
-                    setTextColor(
-                        Color.rgb(
-                            50,
-                            50,
-                            50
-                        )
-                    )
-
-                    setPadding(
-                        dp(4),
-                        dp(10),
-                        dp(4),
-                        dp(10)
-                    )
-                }
-
-            result.addView(line)
-        }
-
-        val payout =
-            bankroll / reciprocal
-
-        val divider =
-            View(this).apply {
-
-                setBackgroundColor(
-                    Color.LTGRAY
+                background = roundedBackground(
+                    Color.rgb(248, 250, 253),
+                    13f,
+                    Color.rgb(225, 229, 235)
                 )
             }
 
-        result.addView(
-            divider,
-            LinearLayout.LayoutParams(
-                -1,
-                dp(1)
+            matchCard.addView(
+                text(
+                    "Maç ${i + 1}   •   Oran ${String.format(Locale.US, "%.2f", odd)}",
+                    15f,
+                    true,
+                    darkText
+                )
+            )
+
+            matchCard.addView(
+                text(
+                    String.format(
+                        Locale.US,
+                        "Yatırım: %.2f TL",
+                        stake
+                    ),
+                    14f
+                )
+            )
+
+            matchCard.addView(
+                text(
+                    String.format(
+                        Locale.US,
+                        "Gelirse: %.2f TL",
+                        payout
+                    ),
+                    14f,
+                    true,
+                    green
+                )
+            )
+
+            matchCard.addView(
+                text(
+                    String.format(
+                        Locale.US,
+                        "Net: %.2f TL",
+                        net
+                    ),
+                    13f,
+                    false,
+                    grayText
+                )
+            )
+
+            result.addView(
+                matchCard,
+                LinearLayout.LayoutParams(
+                    -1,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(
+                        0,
+                        dp(5),
+                        0,
+                        dp(5)
+                    )
+                }
+            )
+        }
+
+        // ÖZET
+        val payout =
+            bankroll / reciprocal
+
+        val summary = LinearLayout(this).apply {
+
+            orientation = LinearLayout.VERTICAL
+
+            setPadding(
+                dp(14),
+                dp(12),
+                dp(14),
+                dp(12)
+            )
+
+            background = roundedBackground(
+                lightBlue,
+                15f
+            )
+        }
+
+        summary.addView(
+            text(
+                "💰  KUPON ÖZETİ",
+                16f,
+                true,
+                darkBlue
             )
         )
 
-        result.addView(
+        summary.addView(
             text(
                 String.format(
                     Locale.US,
-                    "💵 Toplam Yatırım: %.2f TL",
+                    "Toplam yatırım: %.2f TL",
                     total
                 ),
-                17f,
+                15f,
                 true
             )
         )
 
-        result.addView(
+        summary.addView(
             text(
                 String.format(
                     Locale.US,
-                    "📈 Herhangi Biri Gelirse: %.2f TL",
+                    "Herhangi biri gelirse: %.2f TL",
                     payout
                 ),
-                17f,
-                true
+                18f,
+                true,
+                green
             )
         )
 
-        result.addView(
+        summary.addView(
             text(
                 String.format(
                     Locale.US,
-                    "💰 Kalan Kasa: %.2f TL",
+                    "Kalan kasa: %.2f TL",
                     bankroll - total
                 ),
-                17f,
-                true
+                15f
+            )
+        )
+
+        summary.addView(
+            text(
+                String.format(
+                    Locale.US,
+                    "Geri dönüş oranı: %.2f%%",
+                    (payout / bankroll) * 100
+                ),
+                15f,
+                true,
+                darkBlue
             )
         )
 
         result.addView(
-            text(
-                String.format(
-                    Locale.US,
-                    "📊 Geri Dönüş Oranı: %.2f%%",
-                    (payout / bankroll) * 100
-                ),
-                17f,
-                true
-            )
+            summary,
+            LinearLayout.LayoutParams(
+                -1,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(
+                    0,
+                    dp(12),
+                    0,
+                    dp(4)
+                )
+            }
         )
 
         container.addView(result)
