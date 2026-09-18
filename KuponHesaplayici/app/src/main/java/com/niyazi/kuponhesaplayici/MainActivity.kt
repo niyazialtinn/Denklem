@@ -1,6 +1,7 @@
 package com.niyazi.kuponhesaplayici
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
@@ -10,6 +11,8 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.widget.*
+import org.json.JSONArray
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,7 +36,8 @@ class MainActivity : Activity() {
     private val darkTextColor = Color.rgb(30, 35, 45)
     private val grayTextColor = Color.rgb(100, 108, 120)
     private val greenColor = Color.rgb(46, 125, 50)
-    private val redColor = Color.rgb(190, 40, 40)
+    private val redColor = Color.rgb(198, 40, 40)
+    private val orangeColor = Color.rgb(239, 130, 30)
 
     private val prefs by lazy {
         getSharedPreferences(
@@ -44,9 +48,12 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         buildUi()
     }
+
+    // =========================================================
+    // YARDIMCI
+    // =========================================================
 
     private fun dp(v: Int): Int {
         return (v * resources.displayMetrics.density).toInt()
@@ -100,24 +107,29 @@ class MainActivity : Activity() {
         }
     }
 
+    // =========================================================
+    // ANA ARAYÜZ
+    // =========================================================
+
     private fun buildUi() {
 
-        val root = LinearLayout(this).apply {
+        val root =
+            LinearLayout(this).apply {
 
-            orientation =
-                LinearLayout.VERTICAL
+                orientation =
+                    LinearLayout.VERTICAL
 
-            setPadding(
-                dp(16),
-                dp(14),
-                dp(16),
-                dp(16)
-            )
+                setPadding(
+                    dp(16),
+                    dp(14),
+                    dp(16),
+                    dp(16)
+                )
 
-            setBackgroundColor(
-                pageBackgroundColor
-            )
-        }
+                setBackgroundColor(
+                    pageBackgroundColor
+                )
+            }
 
         // =====================================================
         // BAŞLIK
@@ -239,7 +251,8 @@ class MainActivity : Activity() {
 
                 setSelectAllOnFocus(true)
 
-                hint = "Örn. 3000 TL"
+                hint =
+                    "Örn. 3000 TL"
 
                 setBackgroundDrawable(
                     makeRoundedBackground(
@@ -333,11 +346,14 @@ class MainActivity : Activity() {
             val button =
                 Button(this).apply {
 
-                    text = n.toString()
+                    text =
+                        n.toString()
 
-                    isAllCaps = false
+                    isAllCaps =
+                        false
 
-                    textSize = 14f
+                    textSize =
+                        14f
 
                     setPadding(
                         0,
@@ -390,9 +406,12 @@ class MainActivity : Activity() {
         val scrollView =
             ScrollView(this).apply {
 
-                isFillViewport = true
+                isFillViewport =
+                    true
 
-                addView(container)
+                addView(
+                    container
+                )
             }
 
         root.addView(
@@ -420,7 +439,8 @@ class MainActivity : Activity() {
             val button =
                 matchButtons[i]
 
-            val number = i + 2
+            val number =
+                i + 2
 
             if (number == count) {
 
@@ -457,7 +477,7 @@ class MainActivity : Activity() {
     }
 
     // =========================================================
-    // ORANLAR
+    // ORAN EKRANI
     // =========================================================
 
     private fun buildOdds() {
@@ -522,15 +542,12 @@ class MainActivity : Activity() {
                     )
                 }
 
-            val matchLabel =
+            card.addView(
                 text(
                     "Maç ${i + 1}",
                     15f,
                     true
-                )
-
-            card.addView(
-                matchLabel,
+                ),
                 LinearLayout.LayoutParams(
                     0,
                     dp(52),
@@ -551,7 +568,8 @@ class MainActivity : Activity() {
 
                     setSingleLine()
 
-                    textSize = 19f
+                    textSize =
+                        19f
 
                     gravity =
                         Gravity.CENTER
@@ -613,11 +631,14 @@ class MainActivity : Activity() {
         val calc =
             Button(this).apply {
 
-                text = "HESAPLA"
+                text =
+                    "HESAPLA"
 
-                isAllCaps = false
+                isAllCaps =
+                    false
 
-                textSize = 18f
+                textSize =
+                    18f
 
                 typeface =
                     Typeface.DEFAULT_BOLD
@@ -634,7 +655,6 @@ class MainActivity : Activity() {
                 )
 
                 setOnClickListener {
-
                     calculate()
                 }
             }
@@ -665,9 +685,11 @@ class MainActivity : Activity() {
                 text =
                     "💾  HESAPLAMAYI KAYDET"
 
-                isAllCaps = false
+                isAllCaps =
+                    false
 
-                textSize = 16f
+                textSize =
+                    16f
 
                 typeface =
                     Typeface.DEFAULT_BOLD
@@ -685,7 +707,6 @@ class MainActivity : Activity() {
                 )
 
                 setOnClickListener {
-
                     saveCalculation()
                 }
             }
@@ -707,18 +728,20 @@ class MainActivity : Activity() {
         )
 
         // =====================================================
-        // GEÇMİŞ
+        // KUPON YÖNETİMİ
         // =====================================================
 
         val historyButton =
             Button(this).apply {
 
                 text =
-                    "📋  GEÇMİŞ HESAPLAMALAR"
+                    "📋  KUPON YÖNETİMİ"
 
-                isAllCaps = false
+                isAllCaps =
+                    false
 
-                textSize = 15f
+                textSize =
+                    15f
 
                 typeface =
                     Typeface.DEFAULT_BOLD
@@ -735,7 +758,6 @@ class MainActivity : Activity() {
                 )
 
                 setOnClickListener {
-
                     showHistory()
                 }
             }
@@ -862,7 +884,8 @@ class MainActivity : Activity() {
             return
         }
 
-        var reciprocal = 0.0
+        var reciprocal =
+            0.0
 
         for (odd in odds) {
 
@@ -870,7 +893,8 @@ class MainActivity : Activity() {
                 1.0 / odd
         }
 
-        var total = 0.0
+        var total =
+            0.0
 
         for (i in odds.indices) {
 
@@ -887,7 +911,8 @@ class MainActivity : Activity() {
             val net =
                 payout - stake
 
-            total += stake
+            total +=
+                stake
 
             val matchCard =
                 LinearLayout(this).apply {
@@ -929,8 +954,7 @@ class MainActivity : Activity() {
                         )
                     }",
                     15f,
-                    true,
-                    darkTextColor
+                    true
                 )
             )
 
@@ -989,11 +1013,8 @@ class MainActivity : Activity() {
         }
 
         val payout =
-            bankroll / reciprocal
-
-        // =====================================================
-        // ÖZET
-        // =====================================================
+            bankroll /
+                    reciprocal
 
         val summary =
             LinearLayout(this).apply {
@@ -1130,10 +1151,6 @@ class MainActivity : Activity() {
             return
         }
 
-        // =====================================================
-        // İSİM SOR
-        // =====================================================
-
         val nameInput =
             EditText(this).apply {
 
@@ -1142,7 +1159,8 @@ class MainActivity : Activity() {
 
                 setSingleLine()
 
-                textSize = 16f
+                textSize =
+                    16f
 
                 setPadding(
                     dp(12),
@@ -1186,8 +1204,7 @@ class MainActivity : Activity() {
             text(
                 "Bu kupona bir isim ver:",
                 15f,
-                true,
-                darkTextColor
+                true
             )
         )
 
@@ -1208,8 +1225,10 @@ class MainActivity : Activity() {
         )
 
         val dialog =
-            android.app.AlertDialog.Builder(this)
-                .setTitle("💾 Kuponu Kaydet")
+            AlertDialog.Builder(this)
+                .setTitle(
+                    "💾 Kuponu Kaydet"
+                )
                 .setView(layout)
                 .setNegativeButton(
                     "VAZGEÇ",
@@ -1225,7 +1244,7 @@ class MainActivity : Activity() {
 
             val save =
                 dialog.getButton(
-                    android.app.AlertDialog.BUTTON_POSITIVE
+                    AlertDialog.BUTTON_POSITIVE
                 )
 
             save.setOnClickListener {
@@ -1236,7 +1255,6 @@ class MainActivity : Activity() {
                         .trim()
 
                 if (name.isEmpty()) {
-
                     name =
                         "İsimsiz Kupon"
                 }
@@ -1255,7 +1273,7 @@ class MainActivity : Activity() {
     }
 
     // =========================================================
-    // KAYDI OLUŞTUR
+    // KAYIT
     // =========================================================
 
     private fun saveRecord(
@@ -1264,15 +1282,18 @@ class MainActivity : Activity() {
         odds: List<Double>
     ) {
 
-        var reciprocal = 0.0
+        var reciprocal =
+            0.0
 
         for (odd in odds) {
+
             reciprocal +=
                 1.0 / odd
         }
 
         val payout =
-            bankroll / reciprocal
+            bankroll /
+                    reciprocal
 
         val date =
             SimpleDateFormat(
@@ -1280,37 +1301,63 @@ class MainActivity : Activity() {
                 Locale.getDefault()
             ).format(Date())
 
-        val oddsText =
-            odds.joinToString(",")
-
-        /*
-         * Yeni kayıt formatı:
-         *
-         * isim|tarih|maçsayısı|kasa|oranlar|geridönüş
-         */
-
         val record =
-            "$name|$date|$count|$bankroll|$oddsText|$payout"
+            JSONObject().apply {
 
-        val oldRecords =
-            prefs.getStringSet(
-                "records",
-                emptySet()
-            )?.toMutableList()
-                ?: mutableListOf()
+                put(
+                    "name",
+                    name
+                )
 
-        oldRecords.add(record)
+                put(
+                    "date",
+                    date
+                )
+
+                put(
+                    "count",
+                    count
+                )
+
+                put(
+                    "bankroll",
+                    bankroll
+                )
+
+                put(
+                    "payout",
+                    payout
+                )
+
+                put(
+                    "status",
+                    "BEKLİYOR"
+                )
+
+                val oddsArray =
+                    JSONArray()
+
+                for (odd in odds) {
+                    oddsArray.put(odd)
+                }
+
+                put(
+                    "odds",
+                    oddsArray
+                )
+            }
+
+        val records =
+            getRecords()
+
+        records.put(record)
 
         // Son 50 kayıt
-        val lastRecords =
-            oldRecords.takeLast(50)
+        while (records.length() > 50) {
+            records.remove(0)
+        }
 
-        prefs.edit()
-            .putStringSet(
-                "records",
-                lastRecords.toSet()
-            )
-            .apply()
+        saveRecords(records)
 
         Toast.makeText(
             this,
@@ -1320,52 +1367,362 @@ class MainActivity : Activity() {
     }
 
     // =========================================================
-    // GEÇMİŞ
+    // KAYITLARI OKU
+    // =========================================================
+
+    private fun getRecords(): JSONArray {
+
+        val saved =
+            prefs.getString(
+                "records_json",
+                null
+            )
+
+        if (!saved.isNullOrEmpty()) {
+
+            return try {
+
+                JSONArray(saved)
+
+            } catch (
+                e: Exception
+            ) {
+
+                JSONArray()
+            }
+        }
+
+        // Eski sistemdeki kayıtları dönüştür
+        val oldRecords =
+            prefs.getStringSet(
+                "records",
+                emptySet()
+            )
+
+        val result =
+            JSONArray()
+
+        for (record in oldRecords) {
+
+            val parts =
+                record.split("|")
+
+            try {
+
+                if (parts.size >= 6) {
+
+                    val obj =
+                        JSONObject()
+
+                    obj.put(
+                        "name",
+                        parts[0]
+                    )
+
+                    obj.put(
+                        "date",
+                        parts[1]
+                    )
+
+                    obj.put(
+                        "count",
+                        parts[2].toInt()
+                    )
+
+                    obj.put(
+                        "bankroll",
+                        parts[3].toDouble()
+                    )
+
+                    val oddsArray =
+                        JSONArray()
+
+                    for (
+                        odd in parts[4].split(",")
+                    ) {
+
+                        oddsArray.put(
+                            odd.toDouble()
+                        )
+                    }
+
+                    obj.put(
+                        "odds",
+                        oddsArray
+                    )
+
+                    obj.put(
+                        "payout",
+                        parts[5].toDouble()
+                    )
+
+                    obj.put(
+                        "status",
+                        "BEKLİYOR"
+                    )
+
+                    result.put(obj)
+
+                } else if (
+                    parts.size >= 5
+                ) {
+
+                    val obj =
+                        JSONObject()
+
+                    obj.put(
+                        "name",
+                        "Eski Kupon"
+                    )
+
+                    obj.put(
+                        "date",
+                        parts[0]
+                    )
+
+                    obj.put(
+                        "count",
+                        parts[1].toInt()
+                    )
+
+                    obj.put(
+                        "bankroll",
+                        parts[2].toDouble()
+                    )
+
+                    val oddsArray =
+                        JSONArray()
+
+                    for (
+                        odd in parts[3].split(",")
+                    ) {
+
+                        oddsArray.put(
+                            odd.toDouble()
+                        )
+                    }
+
+                    obj.put(
+                        "odds",
+                        oddsArray
+                    )
+
+                    obj.put(
+                        "payout",
+                        parts[4].toDouble()
+                    )
+
+                    obj.put(
+                        "status",
+                        "BEKLİYOR"
+                    )
+
+                    result.put(obj)
+                }
+
+            } catch (
+                e: Exception
+            ) {
+                // Bozuk kayıt varsa atla
+            }
+        }
+
+        if (result.length() > 0) {
+            saveRecords(result)
+        }
+
+        return result
+    }
+
+    private fun saveRecords(
+        records: JSONArray
+    ) {
+
+        prefs.edit()
+            .putString(
+                "records_json",
+                records.toString()
+            )
+            .apply()
+    }
+
+    // =========================================================
+    // KUPON YÖNETİMİ
     // =========================================================
 
     private fun showHistory() {
 
         val records =
-            prefs.getStringSet(
-                "records",
-                emptySet()
-            )?.toList()
-                ?.reversed()
-                ?: emptyList()
+            getRecords()
 
-        if (records.isEmpty()) {
+        if (records.length() == 0) {
 
             Toast.makeText(
                 this,
-                "Henüz kayıtlı hesaplama yok.",
+                "Henüz kayıtlı kupon yok.",
                 Toast.LENGTH_SHORT
             ).show()
 
             return
         }
 
-        val dialogLayout =
+        val layout =
             LinearLayout(this).apply {
 
                 orientation =
                     LinearLayout.VERTICAL
 
                 setPadding(
-                    dp(20),
-                    dp(10),
-                    dp(20),
-                    dp(10)
+                    dp(18),
+                    dp(8),
+                    dp(18),
+                    dp(8)
                 )
             }
 
-        dialogLayout.addView(
+        // =====================================================
+        // İSTATİSTİK
+        // =====================================================
+
+        var totalInvestment =
+            0.0
+
+        var totalPayout =
+            0.0
+
+        var won =
+            0
+
+        var lost =
+            0
+
+        var waiting =
+            0
+
+        for (
+            i in 0 until records.length()
+        ) {
+
+            val obj =
+                records.getJSONObject(i)
+
+            totalInvestment +=
+                obj.optDouble(
+                    "bankroll",
+                    0.0
+                )
+
+            totalPayout +=
+                obj.optDouble(
+                    "payout",
+                    0.0
+                )
+
+            when (
+                obj.optString(
+                    "status",
+                    "BEKLİYOR"
+                )
+            ) {
+
+                "KAZANDI" ->
+                    won++
+
+                "KAYBETTİ" ->
+                    lost++
+
+                else ->
+                    waiting++
+            }
+        }
+
+        val statsCard =
+            LinearLayout(this).apply {
+
+                orientation =
+                    LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(14),
+                    dp(12),
+                    dp(14),
+                    dp(12)
+                )
+
+                setBackgroundDrawable(
+                    makeRoundedBackground(
+                        lightBlueColor,
+                        16f
+                    )
+                )
+            }
+
+        statsCard.addView(
             text(
-                "Kayıtlı kuponların:",
-                15f,
-                false,
-                grayTextColor
+                "📊  KUPON İSTATİSTİKLERİ",
+                16f,
+                true,
+                darkBlueColor
             )
         )
+
+        statsCard.addView(
+            text(
+                "Toplam kupon: ${records.length()}",
+                14f,
+                true
+            )
+        )
+
+        statsCard.addView(
+            text(
+                String.format(
+                    Locale.US,
+                    "Toplam yatırım: %.2f TL",
+                    totalInvestment
+                ),
+                14f
+            )
+        )
+
+        statsCard.addView(
+            text(
+                String.format(
+                    Locale.US,
+                    "Toplam geri dönüş: %.2f TL",
+                    totalPayout
+                ),
+                14f
+            )
+        )
+
+        statsCard.addView(
+            text(
+                "🟢 Kazandı: $won    🔴 Kaybetti: $lost    🟠 Bekliyor: $waiting",
+                14f,
+                true
+            )
+        )
+
+        layout.addView(
+            statsCard,
+            LinearLayout.LayoutParams(
+                -1,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+
+                setMargins(
+                    0,
+                    0,
+                    0,
+                    dp(10)
+                )
+            }
+        )
+
+        // =====================================================
+        // SCROLL LİSTE
+        // =====================================================
 
         val scroll =
             ScrollView(this)
@@ -1377,93 +1734,47 @@ class MainActivity : Activity() {
                     LinearLayout.VERTICAL
             }
 
-        for (record in records) {
+        // En yeni üstte
+        for (
+            reverseIndex in
+            records.length() - 1 downTo 0
+        ) {
 
-            val parts =
-                record.split("|")
-
-            // Yeni kayıt formatı
-            if (parts.size >= 6) {
-
-                val name = parts[0]
-                val date = parts[1]
-                val matchCount = parts[2]
-                val bankroll =
-                    parts[3].toDoubleOrNull()
-                        ?: 0.0
-
-                val odds =
-                    parts[4].split(",")
-
-                val payout =
-                    parts[5].toDoubleOrNull()
-                        ?: 0.0
-
-                addHistoryCard(
-                    list,
-                    name,
-                    date,
-                    matchCount,
-                    bankroll,
-                    odds,
-                    payout
+            val obj =
+                records.getJSONObject(
+                    reverseIndex
                 )
 
-            } else if (parts.size >= 5) {
-
-                // Eski kayıt formatı
-                val name =
-                    "Eski Kupon"
-
-                val date = parts[0]
-
-                val matchCount =
-                    parts[1]
-
-                val bankroll =
-                    parts[2].toDoubleOrNull()
-                        ?: 0.0
-
-                val odds =
-                    parts[3].split(",")
-
-                val payout =
-                    parts[4].toDoubleOrNull()
-                        ?: 0.0
-
-                addHistoryCard(
-                    list,
-                    name,
-                    date,
-                    matchCount,
-                    bankroll,
-                    odds,
-                    payout
-                )
-            }
+            addHistoryCard(
+                list,
+                records,
+                reverseIndex,
+                obj
+            )
         }
 
         scroll.addView(list)
 
-        dialogLayout.addView(
+        layout.addView(
             scroll,
             LinearLayout.LayoutParams(
                 -1,
-                dp(430)
+                dp(410)
             )
         )
 
         // =====================================================
-        // TÜM GEÇMİŞİ SİL
+        // TÜMÜNÜ SİL
         // =====================================================
 
         val clearButton =
             Button(this).apply {
 
                 text =
-                    "🗑  TÜM GEÇMİŞİ SİL"
+                    "🗑  TÜM KUPONLARI SİL"
 
-                isAllCaps = false
+                isAllCaps =
+                    false
 
                 setTextColor(
                     redColor
@@ -1471,11 +1782,11 @@ class MainActivity : Activity() {
 
                 setOnClickListener {
 
-                    confirmDeleteHistory()
+                    confirmDeleteAll()
                 }
             }
 
-        dialogLayout.addView(
+        layout.addView(
             clearButton,
             LinearLayout.LayoutParams(
                 -1,
@@ -1491,11 +1802,11 @@ class MainActivity : Activity() {
             }
         )
 
-        android.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle(
-                "📋 Geçmiş Hesaplamalar"
+                "📋 Kupon Yönetimi"
             )
-            .setView(dialogLayout)
+            .setView(layout)
             .setPositiveButton(
                 "KAPAT",
                 null
@@ -1504,18 +1815,51 @@ class MainActivity : Activity() {
     }
 
     // =========================================================
-    // GEÇMİŞ KARTI
+    // KUPON KARTI
     // =========================================================
 
     private fun addHistoryCard(
         list: LinearLayout,
-        name: String,
-        date: String,
-        matchCount: String,
-        bankroll: Double,
-        odds: List<String>,
-        payout: Double
+        records: JSONArray,
+        index: Int,
+        obj: JSONObject
     ) {
+
+        val name =
+            obj.optString(
+                "name",
+                "İsimsiz Kupon"
+            )
+
+        val date =
+            obj.optString(
+                "date",
+                "-"
+            )
+
+        val matchCount =
+            obj.optInt(
+                "count",
+                0
+            )
+
+        val bankroll =
+            obj.optDouble(
+                "bankroll",
+                0.0
+            )
+
+        val payout =
+            obj.optDouble(
+                "payout",
+                0.0
+            )
+
+        val status =
+            obj.optString(
+                "status",
+                "BEKLİYOR"
+            )
 
         val card =
             LinearLayout(this).apply {
@@ -1532,12 +1876,8 @@ class MainActivity : Activity() {
 
                 setBackgroundDrawable(
                     makeRoundedBackground(
-                        Color.rgb(
-                            248,
-                            250,
-                            253
-                        ),
-                        14f,
+                        Color.WHITE,
+                        15f,
                         Color.rgb(
                             225,
                             229,
@@ -1549,27 +1889,54 @@ class MainActivity : Activity() {
                 setOnClickListener {
 
                     showHistoryDetail(
-                        name,
-                        date,
-                        matchCount,
-                        bankroll,
-                        odds,
-                        payout
+                        records,
+                        index
                     )
                 }
             }
 
-        // KUPON ADI
-        card.addView(
+        // =====================================================
+        // ÜST SATIR
+        // =====================================================
+
+        val topRow =
+            LinearLayout(this).apply {
+
+                orientation =
+                    LinearLayout.HORIZONTAL
+
+                gravity =
+                    Gravity.CENTER_VERTICAL
+            }
+
+        topRow.addView(
             text(
                 "🎫  $name",
                 17f,
                 true,
                 darkBlueColor
+            ),
+            LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f
             )
         )
 
+        topRow.addView(
+            statusView(status),
+            LinearLayout.LayoutParams(
+                dp(105),
+                dp(34)
+            )
+        )
+
+        card.addView(topRow)
+
+        // =====================================================
         // TARİH
+        // =====================================================
+
         card.addView(
             text(
                 "📅 $date",
@@ -1579,10 +1946,13 @@ class MainActivity : Activity() {
             )
         )
 
-        // MAÇ + KASA
+        // =====================================================
+        // MAÇ / KASA
+        // =====================================================
+
         card.addView(
             text(
-                "⚽ $matchCount maç   •   Kasa: ${
+                "⚽ $matchCount maç   •   💰 Kasa: ${
                     String.format(
                         Locale.US,
                         "%.2f",
@@ -1593,10 +1963,13 @@ class MainActivity : Activity() {
             )
         )
 
+        // =====================================================
         // GERİ DÖNÜŞ
+        // =====================================================
+
         card.addView(
             text(
-                "💰 Geri dönüş: ${
+                "📈 Geri dönüş: ${
                     String.format(
                         Locale.US,
                         "%.2f",
@@ -1607,6 +1980,169 @@ class MainActivity : Activity() {
                 true,
                 greenColor
             )
+        )
+
+        // =====================================================
+        // DURUM BUTONLARI
+        // =====================================================
+
+        val statusRow =
+            LinearLayout(this).apply {
+
+                orientation =
+                    LinearLayout.HORIZONTAL
+            }
+
+        val waitingButton =
+            smallStatusButton(
+                "🟠 Bekliyor",
+                orangeColor
+            )
+
+        waitingButton.setOnClickListener {
+
+            updateStatus(
+                records,
+                index,
+                "BEKLİYOR"
+            )
+        }
+
+        val wonButton =
+            smallStatusButton(
+                "🟢 Kazandı",
+                greenColor
+            )
+
+        wonButton.setOnClickListener {
+
+            updateStatus(
+                records,
+                index,
+                "KAZANDI"
+            )
+        }
+
+        val lostButton =
+            smallStatusButton(
+                "🔴 Kaybetti",
+                redColor
+            )
+
+        lostButton.setOnClickListener {
+
+            updateStatus(
+                records,
+                index,
+                "KAYBETTİ"
+            )
+        }
+
+        statusRow.addView(
+            waitingButton,
+            LinearLayout.LayoutParams(
+                0,
+                dp(42),
+                1f
+            ).apply {
+                setMargins(
+                    0,
+                    dp(8),
+                    dp(3),
+                    0
+                )
+            }
+        )
+
+        statusRow.addView(
+            wonButton,
+            LinearLayout.LayoutParams(
+                0,
+                dp(42),
+                1f
+            ).apply {
+                setMargins(
+                    dp(3),
+                    dp(8),
+                    dp(3),
+                    0
+                )
+            }
+        )
+
+        statusRow.addView(
+            lostButton,
+            LinearLayout.LayoutParams(
+                0,
+                dp(42),
+                1f
+            ).apply {
+                setMargins(
+                    dp(3),
+                    dp(8),
+                    0,
+                    0
+                )
+            }
+        )
+
+        card.addView(statusRow)
+
+        // =====================================================
+        // SİL
+        // =====================================================
+
+        val deleteButton =
+            Button(this).apply {
+
+                text =
+                    "🗑 Kuponu Sil"
+
+                isAllCaps =
+                    false
+
+                textSize =
+                    13f
+
+                setTextColor(
+                    redColor
+                )
+
+                setBackgroundDrawable(
+                    makeRoundedBackground(
+                        Color.rgb(
+                            255,
+                            245,
+                            245
+                        ),
+                        10f
+                    )
+                )
+
+                setOnClickListener {
+
+                    confirmDeleteSingle(
+                        records,
+                        index,
+                        name
+                    )
+                }
+            }
+
+        card.addView(
+            deleteButton,
+            LinearLayout.LayoutParams(
+                -1,
+                dp(42)
+            ).apply {
+
+                setMargins(
+                    0,
+                    dp(7),
+                    0,
+                    0
+                )
+            }
         )
 
         list.addView(
@@ -1627,102 +2163,360 @@ class MainActivity : Activity() {
     }
 
     // =========================================================
-    // KUPON DETAYI
+    // DURUM GÖRÜNÜMÜ
+    // =========================================================
+
+    private fun statusView(
+        status: String
+    ): TextView {
+
+        val color =
+            when (status) {
+
+                "KAZANDI" ->
+                    greenColor
+
+                "KAYBETTİ" ->
+                    redColor
+
+                else ->
+                    orangeColor
+            }
+
+        return text(
+            status,
+            12f,
+            true,
+            color
+        ).apply {
+
+            gravity =
+                Gravity.CENTER
+
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    Color.WHITE,
+                    10f,
+                    color
+                )
+            )
+        }
+    }
+
+    // =========================================================
+    // DURUM BUTONU
+    // =========================================================
+
+    private fun smallStatusButton(
+        label: String,
+        color: Int
+    ): Button {
+
+        return Button(this).apply {
+
+            text =
+                label
+
+            isAllCaps =
+                false
+
+            textSize =
+                11f
+
+            setTextColor(
+                color
+            )
+
+            setPadding(
+                0,
+                0,
+                0,
+                0
+            )
+
+            setBackgroundDrawable(
+                makeRoundedBackground(
+                    Color.WHITE,
+                    10f,
+                    color
+                )
+            )
+        }
+    }
+
+    // =========================================================
+    // DURUM DEĞİŞTİR
+    // =========================================================
+
+    private fun updateStatus(
+        records: JSONArray,
+        index: Int,
+        status: String
+    ) {
+
+        try {
+
+            val obj =
+                records.getJSONObject(
+                    index
+                )
+
+            obj.put(
+                "status",
+                status
+            )
+
+            saveRecords(records)
+
+            Toast.makeText(
+                this,
+                "Durum: $status",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            // Listeyi güncelle
+            showHistory()
+
+        } catch (
+            e: Exception
+        ) {
+
+            Toast.makeText(
+                this,
+                "Durum güncellenemedi.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    // =========================================================
+    // DETAY
     // =========================================================
 
     private fun showHistoryDetail(
-        name: String,
-        date: String,
-        matchCount: String,
-        bankroll: Double,
-        odds: List<String>,
-        payout: Double
+        records: JSONArray,
+        index: Int
     ) {
 
-        val message =
-            StringBuilder()
+        try {
 
-        message.append(
-            "🎫 Kupon: $name\n\n"
-        )
+            val obj =
+                records.getJSONObject(
+                    index
+                )
 
-        message.append(
-            "📅 Tarih: $date\n\n"
-        )
+            val name =
+                obj.optString(
+                    "name",
+                    "İsimsiz Kupon"
+                )
 
-        message.append(
-            "💰 Kasa: "
-        )
+            val date =
+                obj.optString(
+                    "date",
+                    "-"
+                )
 
-        message.append(
-            String.format(
-                Locale.US,
-                "%.2f",
-                bankroll
-            )
-        )
+            val count =
+                obj.optInt(
+                    "count",
+                    0
+                )
 
-        message.append(
-            " TL\n\n"
-        )
+            val bankroll =
+                obj.optDouble(
+                    "bankroll",
+                    0.0
+                )
 
-        message.append(
-            "⚽ Maç sayısı: $matchCount\n\n"
-        )
+            val payout =
+                obj.optDouble(
+                    "payout",
+                    0.0
+                )
 
-        message.append(
-            "🎯 Oranlar:\n"
-        )
+            val status =
+                obj.optString(
+                    "status",
+                    "BEKLİYOR"
+                )
 
-        for (i in odds.indices) {
+            val odds =
+                obj.optJSONArray(
+                    "odds"
+                )
+
+            val message =
+                StringBuilder()
 
             message.append(
-                "Maç ${i + 1}: ${odds[i]}\n"
+                "🎫 Kupon: $name\n\n"
             )
+
+            message.append(
+                "📅 Tarih: $date\n\n"
+            )
+
+            message.append(
+                "📌 Durum: $status\n\n"
+            )
+
+            message.append(
+                "⚽ Maç sayısı: $count\n\n"
+            )
+
+            message.append(
+                "💰 Kasa: "
+            )
+
+            message.append(
+                String.format(
+                    Locale.US,
+                    "%.2f",
+                    bankroll
+                )
+            )
+
+            message.append(
+                " TL\n\n"
+            )
+
+            message.append(
+                "🎯 Oranlar:\n"
+            )
+
+            if (odds != null) {
+
+                for (
+                    i in 0 until odds.length()
+                ) {
+
+                    message.append(
+                        "Maç ${i + 1}: "
+                    )
+
+                    message.append(
+                        String.format(
+                            Locale.US,
+                            "%.2f",
+                            odds.optDouble(i)
+                        )
+                    )
+
+                    message.append(
+                        "\n"
+                    )
+                }
+            }
+
+            message.append(
+                "\n📈 Geri dönüş: "
+            )
+
+            message.append(
+                String.format(
+                    Locale.US,
+                    "%.2f",
+                    payout
+                )
+            )
+
+            message.append(
+                " TL"
+            )
+
+            AlertDialog.Builder(this)
+                .setTitle(
+                    "🎫 Kupon Detayı"
+                )
+                .setMessage(
+                    message.toString()
+                )
+                .setPositiveButton(
+                    "KAPAT",
+                    null
+                )
+                .show()
+
+        } catch (
+            e: Exception
+        ) {
+
+            Toast.makeText(
+                this,
+                "Kupon detayı açılamadı.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
+    }
 
-        message.append(
-            "\n💵 Geri dönüş: "
-        )
+    // =========================================================
+    // TEK KUPON SİL
+    // =========================================================
 
-        message.append(
-            String.format(
-                Locale.US,
-                "%.2f",
-                payout
-            )
-        )
+    private fun confirmDeleteSingle(
+        records: JSONArray,
+        index: Int,
+        name: String
+    ) {
 
-        message.append(
-            " TL"
-        )
-
-        android.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle(
-                "🎫 Kupon Detayı"
+                "Kuponu Sil"
             )
             .setMessage(
-                message.toString()
+                "\"$name\" kuponu silinsin mi?"
             )
-            .setPositiveButton(
-                "KAPAT",
+            .setNegativeButton(
+                "VAZGEÇ",
                 null
             )
+            .setPositiveButton(
+                "SİL"
+            ) { _, _ ->
+
+                val newRecords =
+                    JSONArray()
+
+                for (
+                    i in 0 until records.length()
+                ) {
+
+                    if (i != index) {
+
+                        newRecords.put(
+                            records.getJSONObject(i)
+                        )
+                    }
+                }
+
+                saveRecords(
+                    newRecords
+                )
+
+                Toast.makeText(
+                    this,
+                    "🗑 Kupon silindi.",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                showHistory()
+            }
             .show()
     }
 
     // =========================================================
-    // GEÇMİŞİ SİL
+    // TÜM KUPONLARI SİL
     // =========================================================
 
-    private fun confirmDeleteHistory() {
+    private fun confirmDeleteAll() {
 
-        android.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle(
-                "Geçmişi Sil"
+                "Tüm Kuponları Sil"
             )
             .setMessage(
-                "Tüm kayıtlı hesaplamalar silinecek. Emin misin?"
+                "Kayıtlı tüm kuponlar silinecek. Emin misin?"
             )
             .setNegativeButton(
                 "VAZGEÇ",
@@ -1733,12 +2527,13 @@ class MainActivity : Activity() {
             ) { _, _ ->
 
                 prefs.edit()
+                    .remove("records_json")
                     .remove("records")
                     .apply()
 
                 Toast.makeText(
                     this,
-                    "🗑 Geçmiş temizlendi.",
+                    "🗑 Tüm kuponlar silindi.",
                     Toast.LENGTH_SHORT
                 ).show()
             }
