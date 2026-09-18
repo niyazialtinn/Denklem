@@ -81,7 +81,7 @@ class MainActivity : android.app.Activity() {
             val line=TextView(this).apply { text=String.format(Locale.US,"Maç %d  |  Oran %.2f  |  Yatırım %.2f TL  |  Gelirse %.2f TL  |  Net %.2f TL",i+1,o,stake,payout,net); textSize=14f; setTextColor(Color.DKGRAY); setPadding(0,dp(7),0,dp(7)) }
             result.addView(line)
         }
-        val payout=odds.indices.minOfWithOrNull(compareBy { odds[it] })?.let { odds[it] * (bankroll/(odds[it]*reciprocal)) } ?: 0.0
+        val payout = bankroll / reciprocal
         result.addView(text(String.format(Locale.US,"Toplam yatırım: %.2f TL",total),16f,true))
         result.addView(text(String.format(Locale.US,"Herhangi biri gelirse geri dönüş: %.2f TL",payout),16f,true))
         result.addView(text(String.format(Locale.US,"Kalan kasa: %.2f TL",bankroll-total),16f,true))
