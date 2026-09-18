@@ -51,10 +51,6 @@ class MainActivity : Activity() {
         buildUi()
     }
 
-    // =========================================================
-    // YARDIMCI
-    // =========================================================
-
     private fun dp(v: Int): Int {
         return (v * resources.displayMetrics.density).toInt()
     }
@@ -131,10 +127,7 @@ class MainActivity : Activity() {
                 )
             }
 
-        // =====================================================
         // BAŞLIK
-        // =====================================================
-
         val header =
             LinearLayout(this).apply {
 
@@ -190,10 +183,7 @@ class MainActivity : Activity() {
             }
         )
 
-        // =====================================================
         // KASA
-        // =====================================================
-
         val kasaCard =
             LinearLayout(this).apply {
 
@@ -310,10 +300,7 @@ class MainActivity : Activity() {
             }
         )
 
-        // =====================================================
         // MAÇ SEÇİMİ
-        // =====================================================
-
         root.addView(
             text(
                 "Kaç maç?",
@@ -392,10 +379,7 @@ class MainActivity : Activity() {
 
         root.addView(tabs)
 
-        // =====================================================
         // SCROLL
-        // =====================================================
-
         container =
             LinearLayout(this).apply {
 
@@ -477,7 +461,7 @@ class MainActivity : Activity() {
     }
 
     // =========================================================
-    // ORAN EKRANI
+    // ORANLAR
     // =========================================================
 
     private fun buildOdds() {
@@ -624,10 +608,7 @@ class MainActivity : Activity() {
             )
         }
 
-        // =====================================================
         // HESAPLA
-        // =====================================================
-
         val calc =
             Button(this).apply {
 
@@ -675,10 +656,7 @@ class MainActivity : Activity() {
             }
         )
 
-        // =====================================================
         // KAYDET
-        // =====================================================
-
         val saveButton =
             Button(this).apply {
 
@@ -727,10 +705,7 @@ class MainActivity : Activity() {
             }
         )
 
-        // =====================================================
         // KUPON YÖNETİMİ
-        // =====================================================
-
         val historyButton =
             Button(this).apply {
 
@@ -857,7 +832,8 @@ class MainActivity : Activity() {
                 )
             }
 
-        resultView = result
+        resultView =
+            result
 
         result.addView(
             text(
@@ -879,7 +855,9 @@ class MainActivity : Activity() {
                 )
             )
 
-            container.addView(result)
+            container.addView(
+                result
+            )
 
             return
         }
@@ -1016,6 +994,7 @@ class MainActivity : Activity() {
             bankroll /
                     reciprocal
 
+        // ÖZET
         val summary =
             LinearLayout(this).apply {
 
@@ -1111,7 +1090,9 @@ class MainActivity : Activity() {
             }
         )
 
-        container.addView(result)
+        container.addView(
+            result
+        )
     }
 
     // =========================================================
@@ -1139,7 +1120,9 @@ class MainActivity : Activity() {
 
         if (
             bankroll <= 0.0 ||
-            odds.any { it <= 0.0 }
+            odds.any {
+                it <= 0.0
+            }
         ) {
 
             Toast.makeText(
@@ -1255,6 +1238,7 @@ class MainActivity : Activity() {
                         .trim()
 
                 if (name.isEmpty()) {
+
                     name =
                         "İsimsiz Kupon"
                 }
@@ -1273,7 +1257,7 @@ class MainActivity : Activity() {
     }
 
     // =========================================================
-    // KAYIT
+    // KAYIT OLUŞTUR
     // =========================================================
 
     private fun saveRecord(
@@ -1338,7 +1322,10 @@ class MainActivity : Activity() {
                     JSONArray()
 
                 for (odd in odds) {
-                    oddsArray.put(odd)
+
+                    oddsArray.put(
+                        odd
+                    )
                 }
 
                 put(
@@ -1350,14 +1337,20 @@ class MainActivity : Activity() {
         val records =
             getRecords()
 
-        records.put(record)
+        records.put(
+            record
+        )
 
-        // Son 50 kayıt
-        while (records.length() > 50) {
+        while (
+            records.length() > 50
+        ) {
+
             records.remove(0)
         }
 
-        saveRecords(records)
+        saveRecords(
+            records
+        )
 
         Toast.makeText(
             this,
@@ -1382,7 +1375,9 @@ class MainActivity : Activity() {
 
             return try {
 
-                JSONArray(saved)
+                JSONArray(
+                    saved
+                )
 
             } catch (
                 e: Exception
@@ -1392,7 +1387,6 @@ class MainActivity : Activity() {
             }
         }
 
-        // Eski sistemdeki kayıtları dönüştür
         val oldRecords =
             prefs.getStringSet(
                 "records",
@@ -1402,7 +1396,19 @@ class MainActivity : Activity() {
         val result =
             JSONArray()
 
-        for (record in oldRecords) {
+        // BURASI DÜZELTİLDİ
+        // Kotlin nullable iterator hatasına takılmaması için
+        // doğrudan index tabanlı ilerliyoruz.
+
+        val oldRecordList =
+            oldRecords.toList()
+
+        for (
+            recordIndex in oldRecordList.indices
+        ) {
+
+            val record =
+                oldRecordList[recordIndex]
 
             val parts =
                 record.split("|")
@@ -1437,12 +1443,21 @@ class MainActivity : Activity() {
                     val oddsArray =
                         JSONArray()
 
+                    val oddsText =
+                        parts[4]
+
+                    val oddsList =
+                        oddsText.split(",")
+
                     for (
-                        odd in parts[4].split(",")
+                        oddsIndex in oddsList.indices
                     ) {
 
+                        val oddText =
+                            oddsList[oddsIndex]
+
                         oddsArray.put(
-                            odd.toDouble()
+                            oddText.toDouble()
                         )
                     }
 
@@ -1461,7 +1476,9 @@ class MainActivity : Activity() {
                         "BEKLİYOR"
                     )
 
-                    result.put(obj)
+                    result.put(
+                        obj
+                    )
 
                 } else if (
                     parts.size >= 5
@@ -1493,12 +1510,21 @@ class MainActivity : Activity() {
                     val oddsArray =
                         JSONArray()
 
+                    val oddsText =
+                        parts[3]
+
+                    val oddsList =
+                        oddsText.split(",")
+
                     for (
-                        odd in parts[3].split(",")
+                        oddsIndex in oddsList.indices
                     ) {
 
+                        val oddText =
+                            oddsList[oddsIndex]
+
                         oddsArray.put(
-                            odd.toDouble()
+                            oddText.toDouble()
                         )
                     }
 
@@ -1517,7 +1543,9 @@ class MainActivity : Activity() {
                         "BEKLİYOR"
                     )
 
-                    result.put(obj)
+                    result.put(
+                        obj
+                    )
                 }
 
             } catch (
@@ -1527,8 +1555,13 @@ class MainActivity : Activity() {
             }
         }
 
-        if (result.length() > 0) {
-            saveRecords(result)
+        if (
+            result.length() > 0
+        ) {
+
+            saveRecords(
+                result
+            )
         }
 
         return result
@@ -1555,7 +1588,9 @@ class MainActivity : Activity() {
         val records =
             getRecords()
 
-        if (records.length() == 0) {
+        if (
+            records.length() == 0
+        ) {
 
             Toast.makeText(
                 this,
@@ -1581,7 +1616,7 @@ class MainActivity : Activity() {
             }
 
         // =====================================================
-        // İSTATİSTİK
+        // İSTATİSTİKLER
         // =====================================================
 
         var totalInvestment =
@@ -1721,7 +1756,7 @@ class MainActivity : Activity() {
         )
 
         // =====================================================
-        // SCROLL LİSTE
+        // KUPON LİSTESİ
         // =====================================================
 
         val scroll =
@@ -1734,7 +1769,6 @@ class MainActivity : Activity() {
                     LinearLayout.VERTICAL
             }
 
-        // En yeni üstte
         for (
             reverseIndex in
             records.length() - 1 downTo 0
@@ -1753,7 +1787,9 @@ class MainActivity : Activity() {
             )
         }
 
-        scroll.addView(list)
+        scroll.addView(
+            list
+        )
 
         layout.addView(
             scroll,
@@ -1895,10 +1931,7 @@ class MainActivity : Activity() {
                 }
             }
 
-        // =====================================================
         // ÜST SATIR
-        // =====================================================
-
         val topRow =
             LinearLayout(this).apply {
 
@@ -1924,19 +1957,20 @@ class MainActivity : Activity() {
         )
 
         topRow.addView(
-            statusView(status),
+            statusView(
+                status
+            ),
             LinearLayout.LayoutParams(
                 dp(105),
                 dp(34)
             )
         )
 
-        card.addView(topRow)
+        card.addView(
+            topRow
+        )
 
-        // =====================================================
         // TARİH
-        // =====================================================
-
         card.addView(
             text(
                 "📅 $date",
@@ -1946,10 +1980,7 @@ class MainActivity : Activity() {
             )
         )
 
-        // =====================================================
         // MAÇ / KASA
-        // =====================================================
-
         card.addView(
             text(
                 "⚽ $matchCount maç   •   💰 Kasa: ${
@@ -1963,10 +1994,7 @@ class MainActivity : Activity() {
             )
         )
 
-        // =====================================================
         // GERİ DÖNÜŞ
-        // =====================================================
-
         card.addView(
             text(
                 "📈 Geri dönüş: ${
@@ -1982,10 +2010,7 @@ class MainActivity : Activity() {
             )
         )
 
-        // =====================================================
         // DURUM BUTONLARI
-        // =====================================================
-
         val statusRow =
             LinearLayout(this).apply {
 
@@ -2045,6 +2070,7 @@ class MainActivity : Activity() {
                 dp(42),
                 1f
             ).apply {
+
                 setMargins(
                     0,
                     dp(8),
@@ -2061,6 +2087,7 @@ class MainActivity : Activity() {
                 dp(42),
                 1f
             ).apply {
+
                 setMargins(
                     dp(3),
                     dp(8),
@@ -2077,6 +2104,7 @@ class MainActivity : Activity() {
                 dp(42),
                 1f
             ).apply {
+
                 setMargins(
                     dp(3),
                     dp(8),
@@ -2086,12 +2114,11 @@ class MainActivity : Activity() {
             }
         )
 
-        card.addView(statusRow)
+        card.addView(
+            statusRow
+        )
 
-        // =====================================================
         // SİL
-        // =====================================================
-
         val deleteButton =
             Button(this).apply {
 
@@ -2266,7 +2293,9 @@ class MainActivity : Activity() {
                 status
             )
 
-            saveRecords(records)
+            saveRecords(
+                records
+            )
 
             Toast.makeText(
                 this,
@@ -2274,7 +2303,6 @@ class MainActivity : Activity() {
                 Toast.LENGTH_SHORT
             ).show()
 
-            // Listeyi güncelle
             showHistory()
 
         } catch (
@@ -2317,7 +2345,7 @@ class MainActivity : Activity() {
                     "-"
                 )
 
-            val count =
+            val matchCount =
                 obj.optInt(
                     "count",
                     0
@@ -2362,7 +2390,7 @@ class MainActivity : Activity() {
             )
 
             message.append(
-                "⚽ Maç sayısı: $count\n\n"
+                "⚽ Maç sayısı: $matchCount\n\n"
             )
 
             message.append(
@@ -2485,7 +2513,9 @@ class MainActivity : Activity() {
                     if (i != index) {
 
                         newRecords.put(
-                            records.getJSONObject(i)
+                            records.getJSONObject(
+                                i
+                            )
                         )
                     }
                 }
@@ -2506,7 +2536,7 @@ class MainActivity : Activity() {
     }
 
     // =========================================================
-    // TÜM KUPONLARI SİL
+    // TÜMÜNÜ SİL
     // =========================================================
 
     private fun confirmDeleteAll() {
@@ -2527,8 +2557,12 @@ class MainActivity : Activity() {
             ) { _, _ ->
 
                 prefs.edit()
-                    .remove("records_json")
-                    .remove("records")
+                    .remove(
+                        "records_json"
+                    )
+                    .remove(
+                        "records"
+                    )
                     .apply()
 
                 Toast.makeText(
