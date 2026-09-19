@@ -1,0 +1,15 @@
+{
+  "name": "kuponhesaplayici-football-api",
+  "version": "1.0.0",
+  "description": "KuponHesaplayici futbol API backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20 <25"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
