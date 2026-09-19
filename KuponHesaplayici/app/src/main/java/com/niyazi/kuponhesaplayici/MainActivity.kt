@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
@@ -15,9 +17,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import org.json.JSONArray
 import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.Executors
 
 class MainActivity : Activity() {
 
@@ -48,18 +53,69 @@ Context.MODE_PRIVATE
 )
 }
 
-// Mevcut Kupon Yönetimi ekranının parçaları
 private var historyDialog: AlertDialog? = null
 private var historyList: LinearLayout? = null
 
-override fun onCreate(savedInstanceState: Bundle?) {
+// =========================================================
+// V7 CANLI MAÇ SİSTEMİ
+// =========================================================
+
+private val apiBaseUrl =
+"https://kuponhesaplayici-api.onrender.com"
+
+private val networkExecutor =
+Executors.newSingleThreadExecutor()
+
+private val liveHandler =
+Handler(Looper.getMainLooper())
+
+private var liveDialog: AlertDialog? = null
+private var liveList: LinearLayout? = null
+private var liveLoadingText: TextView? = null
+
+private val liveRefreshRunnable =
+object : Runnable {
+override fun run() {
+
+if (
+liveDialog != null &&
+liveDialog!!.isShowing
+) {
+
+loadLiveMatches()
+
+liveHandler.postDelayed(
+this,
+30000L
+)
+}
+}
+}
+
+override fun onCreate(
+savedInstanceState: Bundle?
+) {
 super.onCreate(savedInstanceState)
+
 buildUi()
 }
 
+override fun onDestroy() {
+
+liveHandler.removeCallbacksAndMessages(
+null
+)
+
+networkExecutor.shutdownNow()
+
+super.onDestroy()
+}
+
 private fun dp(value: Int): Int {
+
 return (
-value * resources.displayMetrics.density
+value *
+resources.displayMetrics.density
 ).toInt()
 }
 
@@ -73,11 +129,14 @@ color: Int = darkTextColor
 return TextView(this).apply {
 
 text = value
+
 textSize = size
+
 setTextColor(color)
 
 if (bold) {
-typeface = Typeface.DEFAULT_BOLD
+typeface =
+Typeface.DEFAULT_BOLD
 }
 
 setPadding(
@@ -103,6 +162,7 @@ cornerRadius =
 dp(radius.toInt()).toFloat()
 
 if (strokeColor != null) {
+
 setStroke(
 dp(1),
 strokeColor
@@ -361,7 +421,9 @@ buildOdds()
 }
 }
 
-matchButtons.add(button)
+matchButtons.add(
+button
+)
 
 tabs.addView(
 button,
@@ -414,7 +476,9 @@ buildOdds()
 
 private fun updateMatchButtons() {
 
-for (index in matchButtons.indices) {
+for (
+index in matchButtons.indices
+) {
 
 val button =
 matchButtons[index]
@@ -422,7 +486,9 @@ matchButtons[index]
 val number =
 index + 2
 
-if (number == count) {
+if (
+number == count
+) {
 
 button.setBackgroundDrawable(
 makeRoundedBackground(
@@ -779,6 +845,55 @@ setMargins(
 0,
 0,
 0,
+dp(8)
+)
+}
+)
+
+// =====================================================
+// V7 CANLI MAÇLAR BUTONU
+// =====================================================
+
+val liveButton =
+Button(this).apply {
+
+text =
+"⚽ CANLI MAÇLAR"
+
+isAllCaps = false
+
+textSize = 16f
+
+typeface =
+Typeface.DEFAULT_BOLD
+
+setTextColor(
+Color.WHITE
+)
+
+setBackgroundDrawable(
+makeRoundedBackground(
+redColor,
+16f
+)
+)
+
+setOnClickListener {
+showLiveMatches()
+}
+}
+
+container.addView(
+liveButton,
+LinearLayout.LayoutParams(
+-1,
+dp(58)
+).apply {
+
+setMargins(
+0,
+0,
+0,
 dp(14)
 )
 }
@@ -827,7 +942,9 @@ kasa.text
 val odds =
 mutableListOf<Double>()
 
-for (field in oddsFields) {
+for (
+field in oddsFields
+) {
 
 val value =
 field.text
@@ -898,13 +1015,18 @@ return
 
 var reciprocal = 0.0
 
-for (odd in odds) {
-reciprocal += 1.0 / odd
+for (
+odd in odds
+) {
+reciprocal +=
+1.0 / odd
 }
 
 var total = 0.0
 
-for (i in odds.indices) {
+for (
+i in odds.indices
+) {
 
 val odd =
 odds[i]
@@ -1136,7 +1258,9 @@ kasa.text
 val odds =
 mutableListOf<Double>()
 
-for (field in oddsFields) {
+for (
+field in oddsFields
+) {
 
 val value =
 field.text
@@ -1164,8 +1288,11 @@ return
 
 var reciprocal = 0.0
 
-for (odd in odds) {
-reciprocal += 1.0 / odd
+for (
+odd in odds
+) {
+reciprocal +=
+1.0 / odd
 }
 
 val totalPayout =
@@ -1342,11 +1469,16 @@ JSONArray()
 
 var reciprocal = 0.0
 
-for (odd in odds) {
-reciprocal += 1.0 / odd
+for (
+odd in odds
+) {
+reciprocal +=
+1.0 / odd
 }
 
-for (i in odds.indices) {
+for (
+i in odds.indices
+) {
 
 val odd =
 odds[i]
@@ -1399,7 +1531,9 @@ matches
 val oddsArray =
 JSONArray()
 
-for (odd in odds) {
+for (
+odd in odds
+) {
 oddsArray.put(odd)
 }
 
@@ -1423,6 +1557,7 @@ record
 while (
 records.length() > 50
 ) {
+
 records.remove(0)
 }
 
@@ -1499,7 +1634,9 @@ JSONArray()
 val oldList =
 oldRecords.toList()
 
-for (index in oldList.indices) {
+for (
+index in oldList.indices
+) {
 
 val recordText =
 oldList[index]
@@ -1707,6 +1844,7 @@ i,
 if (
 odd > 0.0
 ) {
+
 reciprocal +=
 1.0 / odd
 }
@@ -1907,8 +2045,10 @@ waitingMatches++
 }
 
 if (
-payout > highestPayout
+payout >
+highestPayout
 ) {
+
 highestPayout =
 payout
 }
@@ -1928,7 +2068,8 @@ else ->
 
 if (
 status != "BEKLİYOR" &&
-matchProfit > highestProfit
+matchProfit >
+highestProfit
 ) {
 
 highestProfit =
@@ -1938,7 +2079,8 @@ matchProfit
 }
 
 val completed =
-wonMatches + lostMatches
+wonMatches +
+lostMatches
 
 val winRate =
 if (
@@ -1973,7 +2115,10 @@ prefs.getString(
 "starting_bankroll",
 "0"
 )
-?.replace(',', '.')
+?.replace(
+',',
+'.'
+)
 ?.toDoubleOrNull()
 ?: 0.0
 
@@ -2345,6 +2490,7 @@ prefs.getString(
 if (
 !current.isNullOrEmpty()
 ) {
+
 setText(current)
 }
 
@@ -2450,7 +2596,6 @@ Toast.LENGTH_SHORT
 
 private fun showHistory() {
 
-// Zaten açıksa ikinci pencere oluşturma.
 if (
 historyDialog != null &&
 historyDialog!!.isShowing
@@ -2568,10 +2713,6 @@ historyDialog!!.show()
 
 rebuildHistoryList()
 }
-
-// =========================================================
-// KUPON LİSTESİNİ AYNI PENCEREDE YENİLE
-// =========================================================
 
 private fun rebuildHistoryList() {
 
@@ -2884,8 +3025,6 @@ payout
 )
 )
 
-// Bu TextView'i tag'e koyuyoruz.
-// Böylece sadece bu maçın yazısı güncellenecek.
 val statusText =
 makeText(
 "Durum: $status",
@@ -2893,9 +3032,6 @@ makeText(
 true,
 statusColor(status)
 )
-
-statusText.tag =
-"match_status_text"
 
 card.addView(
 statusText
@@ -3032,10 +3168,6 @@ dp(4)
 )
 }
 
-// =========================================================
-// DURUM RENGİ
-// =========================================================
-
 private fun statusColor(
 status: String
 ): Int {
@@ -3052,10 +3184,6 @@ else ->
 orangeColor
 }
 }
-
-// =========================================================
-// DURUM BUTONLARI
-// =========================================================
 
 private fun smallStatusButton(
 label: String,
@@ -3095,11 +3223,7 @@ color
 }
 
 // =========================================================
-// MAÇ DURUMUNU DEĞİŞTİR
-//
-// ÖNEMLİ:
-// Burada hiçbir şekilde showHistory()
-// veya yeni AlertDialog çağrılmıyor.
+// DURUM DEĞİŞTİR
 // =========================================================
 
 private fun setMatchStatus(
@@ -3135,7 +3259,6 @@ matches.getJSONObject(
 matchIndex
 )
 
-// Sadece ilgili maçın durumu değişiyor.
 match.put(
 "status",
 status
@@ -3146,7 +3269,6 @@ coupon.put(
 matches
 )
 
-// Genel kupon durumu bilgi amaçlı.
 coupon.put(
 "status",
 calculateCouponStatus(
@@ -3157,10 +3279,6 @@ matches
 saveRecords(
 records
 )
-
-// =================================================
-// SADECE MEVCUT MAÇ KARTINI GÜNCELLE
-// =================================================
 
 statusText.text =
 "Durum: $status"
@@ -3187,12 +3305,6 @@ this,
 Toast.LENGTH_SHORT
 ).show()
 
-// BURADA:
-// showHistory()
-// refreshHistoryDialog()
-// yeni AlertDialog
-// YOK.
-
 } catch (_: Exception) {
 
 Toast.makeText(
@@ -3202,10 +3314,6 @@ Toast.LENGTH_SHORT
 ).show()
 }
 }
-
-// =========================================================
-// GENEL KUPON DURUMU
-// =========================================================
 
 private fun calculateCouponStatus(
 matches: JSONArray
@@ -3255,10 +3363,6 @@ else ->
 "BEKLİYOR"
 }
 }
-
-// =========================================================
-// MAÇLARI GETİR
-// =========================================================
 
 private fun getMatchesForRecord(
 record: JSONObject
@@ -3334,8 +3438,6 @@ this,
 Toast.LENGTH_SHORT
 ).show()
 
-// Mevcut pencereyi kapatmıyoruz.
-// Sadece listeyi yeniliyoruz.
 rebuildHistoryList()
 }
 .show()
@@ -3380,5 +3482,701 @@ Toast.LENGTH_SHORT
 historyDialog?.dismiss()
 }
 .show()
+}
+
+// =========================================================
+// =========================================================
+// V7 - CANLI MAÇLAR
+// =========================================================
+// =========================================================
+
+private fun showLiveMatches() {
+
+if (
+liveDialog != null &&
+liveDialog!!.isShowing
+) {
+
+loadLiveMatches()
+
+return
+}
+
+val mainLayout =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.VERTICAL
+
+setPadding(
+dp(10),
+dp(5),
+dp(10),
+dp(5)
+)
+}
+
+val info =
+makeText(
+"🔴 Canlı maçlar • Otomatik yenileme: 30 sn",
+13f,
+true,
+redColor
+)
+
+mainLayout.addView(
+info,
+LinearLayout.LayoutParams(
+-1,
+LinearLayout.LayoutParams.WRAP_CONTENT
+)
+)
+
+liveLoadingText =
+makeText(
+"⏳ Maçlar yükleniyor...",
+15f,
+true,
+grayTextColor
+)
+
+mainLayout.addView(
+liveLoadingText
+)
+
+val scroll =
+ScrollView(this).apply {
+
+isFillViewport = true
+}
+
+liveList =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.VERTICAL
+}
+
+scroll.addView(
+liveList
+)
+
+mainLayout.addView(
+scroll,
+LinearLayout.LayoutParams(
+-1,
+0,
+1f
+)
+)
+
+val refreshButton =
+Button(this).apply {
+
+text =
+"🔄 ŞİMDİ YENİLE"
+
+isAllCaps = false
+
+textSize = 14f
+
+typeface =
+Typeface.DEFAULT_BOLD
+
+setTextColor(
+darkBlueColor
+)
+
+setBackgroundDrawable(
+makeRoundedBackground(
+lightBlueColor,
+14f,
+blueColor
+)
+)
+
+setOnClickListener {
+
+loadLiveMatches()
+}
+}
+
+mainLayout.addView(
+refreshButton,
+LinearLayout.LayoutParams(
+-1,
+dp(52)
+).apply {
+
+setMargins(
+0,
+dp(8),
+0,
+0
+)
+}
+)
+
+liveDialog =
+AlertDialog.Builder(this)
+.setTitle(
+"⚽ CANLI MAÇLAR"
+)
+.setView(mainLayout)
+.setPositiveButton(
+"KAPAT",
+null
+)
+.create()
+
+liveDialog!!.setOnDismissListener {
+
+liveHandler.removeCallbacks(
+liveRefreshRunnable
+)
+
+liveDialog = null
+liveList = null
+liveLoadingText = null
+}
+
+liveDialog!!.show()
+
+loadLiveMatches()
+
+liveHandler.postDelayed(
+liveRefreshRunnable,
+30000L
+)
+}
+
+// =========================================================
+// API'DEN CANLI MAÇLARI ÇEK
+// =========================================================
+
+private fun loadLiveMatches() {
+
+val loading =
+liveLoadingText
+
+runOnUiThread {
+
+loading?.text =
+"⏳ Canlı maçlar güncelleniyor..."
+}
+
+networkExecutor.execute {
+
+try {
+
+val url =
+URL(
+"$apiBaseUrl/live"
+)
+
+val connection =
+url.openConnection()
+as HttpURLConnection
+
+connection.requestMethod =
+"GET"
+
+connection.connectTimeout =
+15000
+
+connection.readTimeout =
+20000
+
+connection.setRequestProperty(
+"Accept",
+"application/json"
+)
+
+val responseCode =
+connection.responseCode
+
+if (
+responseCode != 200
+) {
+
+throw Exception(
+"Sunucu HTTP $responseCode"
+)
+}
+
+val stream =
+connection.inputStream
+
+val result =
+stream.bufferedReader()
+.use {
+it.readText()
+}
+
+stream.close()
+
+connection.disconnect()
+
+val json =
+JSONObject(result)
+
+runOnUiThread {
+
+displayLiveMatches(
+json
+)
+}
+
+} catch (error: Exception) {
+
+runOnUiThread {
+
+displayLiveError(
+error.message
+?: "Bilinmeyen hata"
+)
+}
+}
+}
+}
+
+// =========================================================
+// CANLI MAÇLARI EKRANA BAS
+// =========================================================
+
+private fun displayLiveMatches(
+json: JSONObject
+) {
+
+val list =
+liveList
+?: return
+
+list.removeAllViews()
+
+val response =
+json.optBoolean(
+"success",
+true
+)
+
+if (!response) {
+
+displayLiveError(
+"API cevap vermedi."
+)
+
+return
+}
+
+val matches =
+json.optJSONArray(
+"response"
+)
+
+if (
+matches == null ||
+matches.length() == 0
+) {
+
+liveLoadingText?.text =
+"🟢 Şu anda canlı maç bulunmuyor."
+
+return
+}
+
+liveLoadingText?.text =
+"🔴 ${matches.length()} canlı maç bulundu."
+
+for (
+i in 0 until matches.length()
+) {
+
+try {
+
+val match =
+matches.getJSONObject(i)
+
+addLiveMatchCard(
+list,
+match
+)
+
+} catch (_: Exception) {
+}
+}
+}
+
+// =========================================================
+// CANLI MAÇ KARTI
+// =========================================================
+
+private fun addLiveMatchCard(
+parent: LinearLayout,
+match: JSONObject
+) {
+
+val fixture =
+match.optJSONObject(
+"fixture"
+)
+
+val teams =
+match.optJSONObject(
+"teams"
+)
+
+val goals =
+match.optJSONObject(
+"goals"
+)
+
+val league =
+match.optJSONObject(
+"league"
+)
+
+val status =
+fixture?.optJSONObject(
+"status"
+)
+
+val home =
+teams?.optJSONObject(
+"home"
+)
+
+val away =
+teams?.optJSONObject(
+"away"
+)
+
+val homeName =
+home?.optString(
+"name",
+"Ev Sahibi"
+) ?: "Ev Sahibi"
+
+val awayName =
+away?.optString(
+"name",
+"Deplasman"
+) ?: "Deplasman"
+
+val homeScore =
+goals?.optString(
+"home",
+"0"
+) ?: "0"
+
+val awayScore =
+goals?.optString(
+"away",
+"0"
+) ?: "0"
+
+val elapsed =
+status?.optInt(
+"elapsed",
+0
+) ?: 0
+
+val shortStatus =
+status?.optString(
+"short",
+"LIVE"
+) ?: "LIVE"
+
+val leagueName =
+league?.optString(
+"name",
+""
+) ?: ""
+
+val card =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.VERTICAL
+
+setPadding(
+dp(13),
+dp(11),
+dp(13),
+dp(11)
+)
+
+setBackgroundDrawable(
+makeRoundedBackground(
+Color.WHITE,
+16f,
+redColor
+)
+)
+}
+
+// Lig
+card.addView(
+makeText(
+"🏆 $leagueName",
+12f,
+true,
+grayTextColor
+)
+)
+
+// Dakika / durum
+val minuteText =
+if (
+elapsed > 0
+) {
+
+"🔴 ${elapsed}'"
+
+} else {
+
+"🔴 $shortStatus"
+}
+
+card.addView(
+makeText(
+minuteText,
+14f,
+true,
+redColor
+)
+)
+
+// Takımlar ve skor
+val matchRow =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.HORIZONTAL
+
+gravity =
+Gravity.CENTER_VERTICAL
+}
+
+val teamsLayout =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.VERTICAL
+}
+
+teamsLayout.addView(
+makeText(
+"🏠 $homeName",
+16f,
+true,
+darkTextColor
+)
+)
+
+teamsLayout.addView(
+makeText(
+"✈️ $awayName",
+16f,
+true,
+darkTextColor
+)
+)
+
+matchRow.addView(
+teamsLayout,
+LinearLayout.LayoutParams(
+0,
+LinearLayout.LayoutParams.WRAP_CONTENT,
+1f
+)
+)
+
+val scoreLayout =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.VERTICAL
+
+gravity =
+Gravity.CENTER
+}
+
+scoreLayout.addView(
+makeText(
+homeScore,
+25f,
+true,
+darkBlueColor
+)
+)
+
+scoreLayout.addView(
+makeText(
+"-",
+15f,
+true,
+grayTextColor
+)
+)
+
+scoreLayout.addView(
+makeText(
+awayScore,
+25f,
+true,
+darkBlueColor
+)
+)
+
+matchRow.addView(
+scoreLayout,
+LinearLayout.LayoutParams(
+dp(65),
+LinearLayout.LayoutParams.WRAP_CONTENT
+)
+)
+
+card.addView(
+matchRow,
+LinearLayout.LayoutParams(
+-1,
+LinearLayout.LayoutParams.WRAP_CONTENT
+).apply {
+
+setMargins(
+0,
+dp(5),
+0,
+0
+)
+}
+)
+
+val fixtureId =
+fixture?.optInt(
+"id",
+0
+) ?: 0
+
+if (
+fixtureId > 0
+) {
+
+card.addView(
+makeText(
+"Fixture ID: $fixtureId",
+11f,
+false,
+grayTextColor
+)
+)
+}
+
+parent.addView(
+card,
+LinearLayout.LayoutParams(
+-1,
+LinearLayout.LayoutParams.WRAP_CONTENT
+).apply {
+
+setMargins(
+0,
+dp(5),
+0,
+dp(5)
+)
+}
+)
+}
+
+// =========================================================
+// CANLI MAÇ HATASI
+// =========================================================
+
+private fun displayLiveError(
+message: String
+) {
+
+val list =
+liveList
+?: return
+
+list.removeAllViews()
+
+liveLoadingText?.text =
+"❌ Canlı maçlar alınamadı."
+
+val errorCard =
+LinearLayout(this).apply {
+
+orientation =
+LinearLayout.VERTICAL
+
+gravity =
+Gravity.CENTER
+
+setPadding(
+dp(20),
+dp(25),
+dp(20),
+dp(25)
+)
+
+setBackgroundDrawable(
+makeRoundedBackground(
+Color.rgb(
+255,
+245,
+245
+),
+15f,
+redColor
+)
+)
+}
+
+errorCard.addView(
+makeText(
+"❌ BAĞLANTI HATASI",
+18f,
+true,
+redColor
+)
+)
+
+errorCard.addView(
+makeText(
+message,
+13f,
+false,
+grayTextColor
+)
+)
+
+errorCard.addView(
+makeText(
+"İnternet bağlantınızı kontrol edip tekrar deneyin.",
+13f,
+false,
+grayTextColor
+)
+)
+
+list.addView(
+errorCard,
+LinearLayout.LayoutParams(
+-1,
+LinearLayout.LayoutParams.WRAP_CONTENT
+).apply {
+
+setMargins(
+0,
+dp(10),
+0,
+dp(10)
+)
+}
+)
 }
 }
